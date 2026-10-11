@@ -41,8 +41,8 @@ def createAPDUHeader(apdu, klass, operationSpecifier, length):
     apdu.append((operationSpecifier << 6) | (length & 0x3F))
 
 def createAPDU(klass, op, datapoints):
-    #di = dataitems.DATAITEMS_FOR_CLASS[klass]
-    di = db.dataitemsByClass("magna", klass)
+    di = dataitems.DATAITEMS_FOR_CLASS[klass]
+    #di = db.dataitemsByClass("magna", klass)
     result = []
     createAPDUHeader(result, klass, op, len(datapoints) * 2)
     for dp, value in datapoints:
@@ -52,8 +52,8 @@ def createAPDU(klass, op, datapoints):
     return result
 
 def createAPDUNoData(klass, op, datapoints):
-    #di = dataitems.DATAITEMS_FOR_CLASS[klass]
-    di = db.dataitemsByClass("magna", klass)
+    di = dataitems.DATAITEMS_FOR_CLASS[klass]
+    #di = db.dataitemsByClass("magna", klass)
     result = []
     createAPDUHeader(result, klass, op, len(datapoints))
     for dp in datapoints:

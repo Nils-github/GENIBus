@@ -31,7 +31,7 @@ import logging
 
 import genilib.utils as utils
 import genicontrol.defs as defs
-from genilib.crc import Crc, CrcError
+import genilib.utils.crc as crc
 
 logger = logging.getLogger("GeniControl")
 
@@ -47,18 +47,13 @@ class APDUClassNotSupportedError(Exception): pass
 class FramingError(Exception): pass
 
 def dissectResponse(frame):
-    buf = utils.makeBuffer(frame)
-    arr =  utils.makeArray(buf)
+    arr = frame
 
-    crc = Crc(0xffff)
-    actualValue = 0
+    crc.check_telegram(frame)
     sd = arr[defs.START_DELIMITER]
     length = arr[defs.LENGTH]
     da = arr[defs.DESTINATION_ADRESS]
     sa = arr[defs.SOURCE_ADDRESS]
-    crc.update(length)
-    crc.update(da)
-    crc.update(sa)
 
     dissectingState = APDU_HEADER0
     numberOfDataBytes = 0
@@ -69,7 +64,6 @@ def dissectResponse(frame):
         raise FramingError("Frame length doesn't match length byte.")
     for idx in range(defs.PDU_START, length + 2):
         ch = arr[idx]
-        crc.update(ch)
         if dissectingState == APDU_HEADER0:
             klass = ch & 0x0f
             if klass not in defs.SUPPORTED_CLASSES:
@@ -92,9 +86,6 @@ def dissectResponse(frame):
             if byteCount <= 0:
                 dissectingState = APDU_HEADER0
                 result.append(APDU(klass, opAck, data))
-    frameCrc = utils.makeWord(arr[defs.CRC_HIGH], arr[defs.CRC_LOW])
-    if crc.get() != frameCrc:
-        raise CrcError("Frame CRC doesn't match calculated CRC.")
     return DissectionResult(sd, da, sa, result)
 
 

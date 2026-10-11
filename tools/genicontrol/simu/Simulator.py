@@ -38,7 +38,7 @@ import genicontrol.dataitems as dataitems
 import genicontrol.defs as defs
 from genicontrol.defs import Info, Item
 import genicontrol.units as units
-from genilib.crc import checkCrc, calcuteCrc
+import genilib.utils.crc as crc
 import genilib.utils as utils
 from genilib.utils import dumpHex
 
@@ -235,9 +235,9 @@ def createResponse(request):
         result.append(apduLength & 0x3f)
         result.extend(pdu)
 
-    crc = calcuteCrc(result)
-    result.extend((utils.hiByte(crc), utils.loByte(crc), ))
-    return bytearray(result)
+    result = crc.append_telegram(result)
+ 
+    return result
 
 
 class SimulationServer(ConnectionIF):

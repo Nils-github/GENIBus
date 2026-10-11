@@ -30,7 +30,7 @@ import array
 import logging
 import genicontrol.dataitems as dataitems
 import genicontrol.defs as defs
-from genilib.crc import calcuteCrc
+import genilib.utils.crc
 from genilib.utils import bytes, dumpHex
 
 logger = logging.getLogger("genibus")

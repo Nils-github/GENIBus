@@ -105,7 +105,7 @@ class RequestorThread(threading.Thread):
         self._currentRetry = 0
         self._model = model
         self._requestedDatapoints = []
-        self._lastCalled = time.clock()
+        self._lastCalled = time.perf_counter()
         self._cycleTime = CYCLE_TIME_STARTUP
 
     def run(self):
@@ -271,7 +271,7 @@ class RequestorThread(threading.Thread):
         return self._state
 
     def clockDiff(self):
-        return time.clock() - self._lastCalled
+        return time.perf_counter() - self._lastCalled
 
     requestQueue = property(_getRequestQueue)
 

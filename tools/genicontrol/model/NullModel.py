@@ -158,9 +158,11 @@ class NullModel(ModelIf.IModel):
             elif key.endswith('_16'): # 0x83 Extended Precision 16bit
                 info = self.getInfo(defs.APDUClass.SIXTEENBIT_MEASURED_DATA, key)
                 scalingInfo = getScalingInfo(info)
-                if key == 't_w_16':
-                    scaledValue = "%.2f" % self.roundValue(conversion.convertExtended16(value, info.zero, info.range, scalingInfo.factor))
-                    scaledValue = str(float(scaledValue) - 273.15) # Kelvin -> Celsius
+                if info.zero is None or info.range is None:
+                    scaledValue = str(value)
+                elif key == 't_w_16':
+                    kelvin = conversion.convertExtended16(value, info.zero, info.range, scalingInfo.factor)
+                    scaledValue = "%.2f" % (float(kelvin) - 273.15) # Kelvin -> Celsius
                 else:
                     scaledValue = "%.2f" % self.roundValue(conversion.convertExtended16(value, info.zero, info.range, scalingInfo.factor))
                 msg = "SIXTEENBIT_MEASURED_DATA.%s"

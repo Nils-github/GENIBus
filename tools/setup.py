@@ -20,7 +20,7 @@ setup(
                 'GeniControl = genicontrol.GeniControl:main',
         ],
     },
-    install_requires = ['importlib', 'mako', 'pyserial', 'pyyaml', 'enum',],
+    install_requires = ['mako', 'pyserial', 'pyyaml',],
     data_files = [
             ('genicontrol/config', glob('genicontrol/config/*.*')),
     ],

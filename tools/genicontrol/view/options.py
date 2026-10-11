@@ -63,12 +63,12 @@ class OptionsView(wx.Dialog):
 
         staticBox = wx.StaticBoxSizer(wx.StaticBox(self, -1, " Driver " ), wx.VERTICAL )
 
-        gridsizer = wx.FlexGridSizer(3 ,2)
+        gridsizer = wx.FlexGridSizer(3, 2, 0, 0)
 
         self.radioTcp = wx.RadioButton(self, ID_RB_TCPIP, " Arduino / TCP ", style = wx.RB_GROUP)
         gridsizer.Add(self.radioTcp, 1, wx.ALL, 5)
 
-        gridsizer2 = wx.FlexGridSizer(3 ,2)
+        gridsizer2 = wx.FlexGridSizer(3, 2, 0, 0)
         self.addr = createLabeledControl(self, 'Server IP-address', ipaddrctrl.IpAddrCtrl(self, id = ID_IPADDR), gridsizer2, self.tcpControls)
         self.mask = createLabeledControl(self, 'Subnet-mask', ipaddrctrl.IpAddrCtrl(self, id = ID_SUBNET),gridsizer2, self.tcpControls )
         self.port = createLabeledControl(self, 'Server-port', TextCtrl(self, id = ID_PORT, mask = '#####'), gridsizer2, self.tcpControls)

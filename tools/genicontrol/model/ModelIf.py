@@ -33,6 +33,12 @@ from pubsub import pub as Publisher
 
 DATA_NOT_AVAILABLE = None
 
+class Message(object):
+    def __init__(self, topic, data):
+        self.topic = topic
+        self.data = data
+
+
 class IModel(object):
     __metaclass__ = abc.ABCMeta
     logger = logging.getLogger("GeniControl")
@@ -45,7 +51,8 @@ class IModel(object):
         #self.initialize()
 
     def sendMessage(self, topic, data):
-        self._pub.sendMessage(topic, data)
+        message = Message(tuple(topic.split('.')), data)
+        self._pub.sendMessage(topic, msg=message)
 
     def subscribe(self, topic, callback):
         self._pub.subscribe(topic = topic, listener = callback)

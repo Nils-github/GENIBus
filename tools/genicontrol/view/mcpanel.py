@@ -166,7 +166,7 @@ class MCPanel(ScrolledPanel):
             state = True if value == 'Remote' else False
             self.controlsPanel.btnRemoteLocal.setState(state)
         else:
-            if itemMap.has_key(item):
+            if item in itemMap:
                 self.pumpOperationPanel.setValue(itemMap[item], value)
 
 """

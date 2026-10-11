@@ -64,7 +64,7 @@ class BusmonitorPanel(wx.Panel):
         self.SetSizerAndFit(sizer)
         self.logFile =  None
         if self.logfilewanted == '1':
-            self.logFile =  file(os.path.join(defs.CONFIGURATION_DIRECTORY, 'busmonitor.log'), 'w')
+            self.logFile =  open(os.path.join(defs.CONFIGURATION_DIRECTORY, 'busmonitor.log'), 'w')
 
     def __del__(self):
         if self.logFile:

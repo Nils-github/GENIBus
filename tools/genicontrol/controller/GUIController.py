@@ -41,7 +41,7 @@ from wx import CallAfter
 
 class InfoWriter(object):
     def __init__(self, fname):
-        self._file = file(fname, 'w')
+        self._file = open(fname, 'w')
 
     def __del__(self):
         self._file.close()
@@ -89,7 +89,7 @@ class ControllerThread(threading.Thread):
             self.logger.debug("unitFamily and unitType not available.")
         #unitVersion = self._model.getValue(defs.APDUClass.MEASURED_DATA, 'unit_version') ## TODO: Fixme!
         else:
-            with file(dd.getDeviceFilePath(unitFamily, unitType, 1), 'w') as outf:
+            with open(dd.getDeviceFilePath(unitFamily, unitType, 1), 'w') as outf:
                 #outf.write(str(self.infoRecords))
                 yaml.dump(self.infoRecords, outf)
 

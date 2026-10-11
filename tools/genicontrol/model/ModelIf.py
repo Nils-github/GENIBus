@@ -29,8 +29,7 @@
 
 import abc
 import logging
-from wx.lib.pubsub import setuparg1
-from wx.lib.pubsub import pub as Publisher
+from pubsub import pub as Publisher
 
 DATA_NOT_AVAILABLE = None
 

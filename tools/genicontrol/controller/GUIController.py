@@ -35,8 +35,7 @@ import genicontrol.defs as defs
 from genicontrol.scaling import getScalingInfo
 from genicontrol.controller.ControllerIF import IController
 import genicontrol.dd as dd
-from wx.lib.pubsub import setuparg1
-from wx.lib.pubsub import pub as Publisher
+from pubsub import pub as Publisher
 from wx import CallAfter
 
 

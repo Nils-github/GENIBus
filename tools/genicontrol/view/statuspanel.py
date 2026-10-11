@@ -162,9 +162,9 @@ class LEDPanel(wx.Panel):
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
 
         self.leds = {
-            'red': leds.ledRed.getBitmap(),
-            'green': leds.ledGreen.getBitmap(),
-            'grey': leds.ledGrey.getBitmap()
+            'red': wx.Bitmap(leds.ledRed.GetImage()),
+            'green': wx.Bitmap(leds.ledGreen.GetImage()),
+            'grey': wx.Bitmap(leds.ledGrey.GetImage())
         }
 
         size = wx.Size(1, 0)

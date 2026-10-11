@@ -115,13 +115,13 @@ class ConfigProcessor(object):
         if not section in self._sections:
             return False
         else:
-            return self._sections.get(section).has_key(option)
+            return option in self._sections.get(section)
 
     def has_section(self, section):
         return section in self._sections
 
     def _getType(self, section, option):
-        if self._sections[section].has_key(option):
+        if option in self._sections[section]:
             return type(self._sections[section][option])
         else:
             return

@@ -31,7 +31,7 @@ try:
 except ImportError:
     import configparser # Python 3.x
 
-from genilib.utils import createStringBuffer
+from genilib.utils import loadYaml
 
 import logging
 import os
@@ -62,7 +62,7 @@ class Config(object):
                     cls.defaultsFile = "%s_Defaults.yaml" % applicationName
                     print("Defaults file is '{0}'.".format(cls.defaultsFile))
                     cls._instance = super(cls.__class__, cls).__new__(cls)
-                    baz = yaml.load(createStringBuffer(readConfigFile("genicontrol", cls.defaultsFile)))
+                    baz = loadYaml(readConfigFile("genicontrol", "default_config.yaml"))
                     cls.cp = ConfigProcessor(baz)
             finally:
                 cls._lock.release()

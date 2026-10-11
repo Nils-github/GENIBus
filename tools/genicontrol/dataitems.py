@@ -32,15 +32,14 @@ __all__ = [
 ]
 
 from collections import namedtuple
-import yaml
 
-from genilib.utils import createStringBuffer
+from genilib.utils import loadYaml
 import genicontrol.defs as defs
 from genilib.configuration import readConfigFile
 
 Dataitem = namedtuple('Dataitem', 'name klass id access note')
 
-DATAITEMS = yaml.load(createStringBuffer(readConfigFile("genicontrol", "dataitemsMAGNA.yaml")))
+DATAITEMS = loadYaml(readConfigFile("genicontrol", "dataitemsMAGNA.yaml"))
 
 def addToDict(d, k, v):
     d[k] = v

@@ -115,11 +115,11 @@ class GBFrame(wx.Frame):
 ##
 
         # Set the wxWindows log target to be this textctrl
-        #wx.Log_SetActiveTarget(wx.LogTextCtrl(self.log))
+        #wx.Log.SetActiveTarget(wx.LogTextCtrl(self.log))
 
         # for serious debugging
-        wx.Log_SetActiveTarget(wx.LogStderr())
-        #wx.Log_SetTraceMask(wx.TraceMessages
+        wx.Log.SetActiveTarget(wx.LogStderr())
+        #wx.Log.SetTraceMask(wx.TraceMessages
 
         self.notebook = TestNB(self, wx.NewId())
         if not pos:

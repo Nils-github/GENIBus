@@ -110,7 +110,7 @@ def createGetValuesPDU(klass, header, protocolData = [], measurements = [], para
         raise TypeError('Parameter "header" must be of type "Header".')
 
     length = 2
-    pdu = []
+    pdu = bytearray()
 
     if protocolData:
         protocolAPDU = createGetProtocolDataAPDU(protocolData)
@@ -149,12 +149,9 @@ def createGetValuesPDU(klass, header, protocolData = [], measurements = [], para
     if strings:
         pdu.extend(stringsAPDU)
 
-    crc = calcuteCrc(pdu)
-    pdu.extend(bytes(crc))
+    pdu = genilib.utils.crc.append_telegram(pdu)
 
-    arr = array.array('B', pdu)
-    # TODO: arr.tostring() for I/O!
-    return arr
+    return pdu
 
 
 def createSetValuesPDU(header, parameter = [], references = []):
@@ -162,7 +159,7 @@ def createSetValuesPDU(header, parameter = [], references = []):
         raise TypeError('Parameter "header" must be of type "Header".')
 
     length = 2
-    pdu = []
+    pdu = bytearray()
 
     if parameter:
         parameterAPDU = createSetParametersAPDU(parameter)
@@ -180,13 +177,9 @@ def createSetValuesPDU(header, parameter = [], references = []):
     if references:
         pdu.extend(referencesAPDU)
 
-    crc = calcuteCrc(pdu)
-    pdu.extend(bytes(crc))
+    pdu = genilib.utils.crc.append_telegram(pdu)
 
-    arr = array.array('B', pdu)
-    # TODO: arr.tostring() for I/O!
-    return arr
-
+    return pdu
 
 def createGetInfoPDU(klass, header, measurements = [], parameter = [], references = []):
     ## To be defensive, at most 15 datapoints should be requested at once (min.frame length = 70 bytes).
@@ -194,7 +187,7 @@ def createGetInfoPDU(klass, header, measurements = [], parameter = [], reference
         raise TypeError('Parameter "header" must be of type "Header".')
 
     length = 2
-    pdu = []
+    pdu = bytearray()
     if measurements:
         if klass == defs.APDUClass.MEASURED_DATA:
             measurementsAPDU = createGetInfoAPDU(defs.APDUClass.MEASURED_DATA, measurements)
@@ -221,20 +214,16 @@ def createGetInfoPDU(klass, header, measurements = [], parameter = [], reference
     if references:
         pdu.extend(referencesAPDU)
 
-    crc = calcuteCrc(pdu)
-    pdu.extend(bytes(crc))
+    pdu = genilib.utils.crc.append_telegram(pdu)
 
-    arr = array.array('B', pdu)
-    # TODO: arr.tostring() for I/O!
-    return arr
-
+    return pdu
 
 def createSetCommandsPDU(header, commands):
     if not isinstance(header, Header):
         raise TypeError('Parameter "header" must be of type "Header".')
 
     length = 2
-    pdu = []
+    pdu = bytearray()
 
     commandsAPDU = createSetCommandsAPDU(commands)
     length += len(commandsAPDU)
@@ -243,12 +232,9 @@ def createSetCommandsPDU(header, commands):
 
     pdu.extend(commandsAPDU)
 
-    crc = calcuteCrc(pdu)
-    pdu.extend(bytes(crc))
-
-    arr = array.array('B', pdu)
-    # TODO: arr.tostring() for I/O!
-    return arr
+    pdu = genilib.utils.crc.append_telegram(pdu)
+ 
+    return pdu
 
 
 

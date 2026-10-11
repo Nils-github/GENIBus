@@ -28,7 +28,7 @@
 
 import unittest
 
-from genilib.crc import calcuteCrc
+from genilib.utils.crc import check_telegram
 
 TEST_VECTORS = (
     (0x27, 0x07, 0x20, 0x01, 0x02, 0xC3, 0x02, 0x10, 0x1A),
@@ -51,22 +51,22 @@ RESULTS = (
 class TestCRC(unittest.TestCase):
 
     def test01(self):
-        self.assertEqual(calcuteCrc(TEST_VECTORS[0]), RESULTS[0])
+        self.assertEqual(check_telegram(TEST_VECTORS[0]), RESULTS[0])
 
     def test02(self):
-        self.assertEqual(calcuteCrc(TEST_VECTORS[1]), RESULTS[1])
+        self.assertEqual(check_telegram(TEST_VECTORS[1]), RESULTS[1])
 
     def test03(self):
-        self.assertEqual(calcuteCrc(TEST_VECTORS[2]), RESULTS[2])
+        self.assertEqual(check_telegram(TEST_VECTORS[2]), RESULTS[2])
 
     def test04(self):
-            self.assertEqual(calcuteCrc(TEST_VECTORS[3]), RESULTS[3])
+            self.assertEqual(check_telegram(TEST_VECTORS[3]), RESULTS[3])
 
     def test05(self):
-            self.assertEqual(calcuteCrc(TEST_VECTORS[4]), RESULTS[4])
+            self.assertEqual(check_telegram(TEST_VECTORS[4]), RESULTS[4])
 
     def test06(self):
-            self.assertEqual(calcuteCrc(TEST_VECTORS[5]), RESULTS[5])
+            self.assertEqual(check_telegram(TEST_VECTORS[5]), RESULTS[5])
 
 
 def main():

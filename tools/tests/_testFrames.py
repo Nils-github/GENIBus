@@ -1,7 +1,7 @@
 
 import unittest
 
-from genilib.crc import checkCrc, calcuteCrc
+from genilib.utils.crc import calculate_crc
 import genilib.utils as utils
 import genicontrol.defs as defs
 #import genicontrol.dataitems as dataitems
@@ -100,7 +100,7 @@ DATA_REQ = (
     0xA3,   ##  alarm_log5 = ID 163
 
     0x11,#0x4B,   ##  CRC high
-    0x76#0x8D,   ##  CRC low
+    0x76 #0x8D,   ##  CRC low
 )
 
 
@@ -277,7 +277,7 @@ class TestCrc(unittest.TestCase):
     """
     @staticmethod
     def check(frame):
-        return checkCrc(frame)
+        return calculate_crc(frame)
 
     @staticmethod
     def expectedCrc(frame):

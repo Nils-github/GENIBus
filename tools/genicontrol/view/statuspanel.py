@@ -169,7 +169,8 @@ class LEDPanel(wx.Panel):
 
         size = wx.Size(1, 0)
         for led in self.leds.values():
-            size = max(size, led.GetSize())
+            led_size = led.GetSize()
+            size = wx.Size(max(size.width, led_size.width), max(size.height, led_size.height))
 
         self.ledSize = size
         panelSize = wx.Size(((size.width * 2) + (3 * 5)), (size.height + (2 * 5)))

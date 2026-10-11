@@ -299,7 +299,7 @@ def createInfoRequestTelegrams(destAddr):
             continue
         dd[klass][name] = _id
     for klass, items in dd.items():
-        items = items.items()
+        items = list(items.items())
         if len(items) > MAX_INFO_REQUESTS:
             slices = [items [i : i + MAX_INFO_REQUESTS] for i in range(0, len(items), MAX_INFO_REQUESTS)]
         else:

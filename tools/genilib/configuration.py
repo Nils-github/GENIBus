@@ -38,8 +38,6 @@ import os
 import pkgutil
 import threading
 
-import yaml
-
 from genilib.utils import absConfigurationFilename
 from genilib.utils.configprocessor import ConfigProcessor
 
@@ -62,7 +60,7 @@ class Config(object):
                     cls.defaultsFile = "%s_Defaults.yaml" % applicationName
                     print("Defaults file is '{0}'.".format(cls.defaultsFile))
                     cls._instance = super(cls.__class__, cls).__new__(cls)
-                    baz = loadYaml(readConfigFile("genicontrol", "default_config.yaml"))
+                    baz = loadYaml(readConfigFile("genicontrol", cls.defaultsFile))
                     cls.cp = ConfigProcessor(baz)
             finally:
                 cls._lock.release()

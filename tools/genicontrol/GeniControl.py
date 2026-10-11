@@ -29,7 +29,7 @@
 import array
 import logging
 import os
-import Queue
+import queue
 import wx
 from wx.lib.pubsub import setuparg1
 from wx.lib.pubsub import pub as Publisher
@@ -130,7 +130,7 @@ class GBFrame(wx.Frame):
         self._model = model
         self.notebook.mcPanel.setLEDState(0, True)
         self._quitEvent = quitEvent
-        self._messageQueue = Queue.Queue()
+        self._messageQueue = queue.Queue()
 
     def quit(self):
         pass

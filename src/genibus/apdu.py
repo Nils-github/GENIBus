@@ -178,7 +178,7 @@ def createGetValuesPDU(
     if strings:
         pdu.extend(stringsAPDU)
 
-    pdu = crc.append_tel(pdu)
+    pdu = crc.append_telegram(pdu)
 
     return pdu
 
@@ -213,7 +213,7 @@ def createSetValuesPDU(
     if references:
         pdu.extend(referencesAPDU)
 
-    pdu = crc.append_tel(pdu)
+    pdu = crc.append_telegram(pdu)
 
     return pdu
 
@@ -267,7 +267,7 @@ def createGetInfoPDU(
     if references:
         pdu.extend(referencesAPDU)
 
-    pdu = crc.append_tel(pdu)
+    pdu = crc.append_telegram(pdu)
 
     return pdu
 
@@ -286,7 +286,7 @@ def createSetCommandsPDU(header: Header, commands: Sequence[str]) -> bytearray:
 
     pdu.extend(commandsAPDU)
 
-    pdu = crc.append_tel(pdu)
+    pdu = crc.append_telegram(pdu)
 
     return pdu
 

@@ -35,7 +35,7 @@ import genicontrol.model.ModelIf as ModelIf
 from genicontrol.model.config import DataitemConfiguration
 import genicontrol.conversion as conversion
 from genicontrol.request import RequestorThread
-from genicontrol.scale import getScalingInfo
+from genicontrol.scaling import getScalingInfo
 from genicontrol.dissect import dissectPumpStatus
 import genicontrol.dataitems as dataitems
 import genicontrol.defs as defs

@@ -236,7 +236,7 @@ def createResponse(request):
         result.extend(pdu)
 
     result = crc.append_telegram(result)
- 
+
     return result
 
 

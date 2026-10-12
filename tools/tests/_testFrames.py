@@ -141,7 +141,7 @@ DATA_RESP = (
     0x00,   ##  value example of alarm_log5
 
     0xec, #0x19,   ##  CRC high
-    0x8b#0x6D,   ##  CRC low
+    0x8b  #0x6D,   ##  CRC low
 )
 
 ## INFO req/resp

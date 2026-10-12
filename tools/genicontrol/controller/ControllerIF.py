@@ -68,14 +68,14 @@ class IController(object):
 
 def connectionFactory(driver):
     from genicontrol.simu.Simulator import SimulationServer
-    from genicontrol.tcpclient import Connector
-    from genicontrol.serialport import SerialPort, serialAvailable
+    from genibus.linklayer.tcpclient import Connector
+    from genibus.linklayer.serialport import SerialPort, serial_available
 
     ip = config.get('network', 'serverip')
     port = config.get('network', 'serverport')
     if driver == 1:
         return Connector(ip, port)
-    elif driver == 2 and serialAvailable:
+    elif driver == 2 and serial_available:
         serialPort = config.get('serial', 'serialport')
         if not serialPort:
             logger.error("Serial port not specified.")

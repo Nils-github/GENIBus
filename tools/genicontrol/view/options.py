@@ -30,7 +30,7 @@
 import wx
 from wx.lib.masked import ipaddrctrl
 from wx.lib.masked import TextCtrl
-from genicontrol.serialport import serialAvailable
+from genibus.linklayer.serialport import serial_available
 from genilib.gui.controls import createLabeledControl
 from genilib.configuration import Config
 
@@ -112,8 +112,8 @@ class OptionsView(wx.Dialog):
         btnsizer.Realize()
         sizer.Add(btnsizer, 0, wx.ALL, 5)
 
-        if not serialAvailable:
-            radioSerial.Enable(False)
+        if not serial_available:
+            self.radioSerial.Enable(False)
 
         self.Bind(wx.EVT_RADIOBUTTON, self.onDriverSelected, self.radioTcp)
         self.Bind(wx.EVT_RADIOBUTTON, self.onDriverSelected, self.radioSerial)

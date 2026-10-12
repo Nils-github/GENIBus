@@ -38,7 +38,7 @@ class Logger:
     LOGGER_BASE_NAME = "genibus"
     FORMAT = "[%(levelname)s (%(name)s)]: %(message)s"
 
-    def __init__(self, level: int = logging.WARN) -> None:
+    def __init__(self, level: int = logging.WARNING) -> None:
         """Initialisiert den Logger und konfiguriert bei Bedarf einen Handler.
 
         Args:
@@ -88,9 +88,9 @@ class Logger:
         """Loggt auf INFO-Level."""
         self.log(message, logging.INFO)
 
-    def warn(self, message: str) -> None:
-        """Loggt auf WARN-Level."""
-        self.log(message, logging.WARN)
+    def warning(self, message: str) -> None:
+        """Loggt auf WARNING-Level."""
+        self.log(message, logging.WARNING)
 
     def error(self, message: str) -> None:
         """Loggt auf ERROR-Level."""
@@ -120,14 +120,14 @@ class Logger:
         """
         level_map = {
             "INFO": logging.INFO,
-            "WARN": logging.WARN,
+            "WARNING": logging.WARNING,
             "DEBUG": logging.DEBUG,
             "ERROR": logging.ERROR,
             "CRITICAL": logging.CRITICAL,
         }
         normalized = level
         if isinstance(level, str):
-            normalized = level_map.get(level.upper(), logging.WARN)
+            normalized = level_map.get(level.upper(), logging.WARNING)
         self.logger.setLevel(int(normalized))
 
     def setLevel(self, level: str | int) -> None:

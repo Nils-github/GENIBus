@@ -36,9 +36,9 @@ def test_logger_api_aliases() -> None:
     assert severity == logging.INFO
     assert message == "hello"
 
-    logger.warn("warning")
+    logger.warning("warning")
     severity2, message2 = logger.getLastError()
-    assert severity2 == logging.WARN
+    assert severity2 == logging.WARNING
     assert message2 == "warning"
 
     logger.set_level("debug")

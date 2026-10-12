@@ -157,7 +157,7 @@ class GBFrame(wx.Frame):
     def onSaveSnapShot(self, event): pass
     def onSaveParameter(self, event): pass
     def onSaveInfo(self, event): pass
-    def onLoadParamter(self, event): pass
+    def onLoadParameter(self, event): pass
 
     def onOptions(self, event):
         showOptionsDialog(self)
@@ -192,7 +192,7 @@ MAIN_MENU = (
          MenuItem("&Save", "Save settings.", "onSaveSettings"),
          MenuItem("Save &parameter", "", "onSaveParameter"),
          MenuItem("Save &info", "Save parameter scaling information to a file.", "onSaveInfo"),
-         MenuItem("&Load paramter", "", "onLoadParamter"),
+         MenuItem("&Load parameter", "", "onLoadParameter"),
          MenuSeparator(),
          MenuItem("&Exit", "Exit GeniControl", "onCloseWindow")),
 

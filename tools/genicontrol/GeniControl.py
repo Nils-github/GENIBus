@@ -45,7 +45,7 @@ from genicontrol.controller.GUIController import GUIController
 import genicontrol.controlids as controlids
 import genicontrol.defs as defs
 from genilib.configuration import Config
-from genicontrol.view.options import showOptionsDialogue
+from genicontrol.view.options import showOptionsDialog
 from genilib.gui.menu import Menu, MenuItem, MenuSeparator, createMenuBar
 from genilib.utils import dumpHex
 
@@ -160,7 +160,7 @@ class GBFrame(wx.Frame):
     def onLoadParamter(self, event): pass
 
     def onOptions(self, event):
-        showOptionsDialogue(self)
+        showOptionsDialog(self)
 
     def onCloseWindow(self, event):
         Publisher.sendMessage('QUIT')

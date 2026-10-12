@@ -283,7 +283,7 @@ class OptionsController(object):
         self.view.Destroy()
 
 
-def showOptionsDialogue(parent):
+def showOptionsDialog(parent):
     model = OptionsModel()
     controller = OptionsController(parent, model)
     controller.execute()

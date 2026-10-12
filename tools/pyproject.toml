@@ -1,0 +1,34 @@
+[build-system]
+requires = ["hatchling>=1.6.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "genicontrol"
+version = "0.1"
+description = "GENIBus library"
+requires-python = ">=3.10"
+authors = [
+    { name = "Christoph Schueler", email = "cpu12.gems@googlemail.com" },
+]
+dependencies = [
+    "mako",
+    "pyserial",
+    "pyyaml",
+    "wxPython",
+    "PyPubSub",
+]
+
+[project.urls]
+Homepage = "https://github.com/christoph2/GENIBus-Arduino"
+Repository = "https://github.com/christoph2/GENIBus-Arduino"
+
+[project.scripts]
+GeniControl = "genicontrol.GeniControl:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["genicontrol", "genilib"]
+
+[tool.hatch.build]
+include = [
+    "genicontrol/config/*",
+]

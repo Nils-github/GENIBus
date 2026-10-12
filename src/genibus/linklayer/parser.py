@@ -86,7 +86,7 @@ def parse_frame(frame: Sequence[int]) -> ParseResult:
     if len(arr) < 6:
         raise FramingError("Frame too short.")
 
-    crc.check_tel(frame)
+    crc.check_telegram(frame)
     sd = arr[defs.START_DELIMITER]
     length = arr[defs.LENGTH]
     da = arr[defs.DESTINATION_ADDRESS]

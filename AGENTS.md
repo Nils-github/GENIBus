@@ -67,7 +67,7 @@ Currently supported model: `"magna"` (also `"upe"`).
 
 - **Singleton**: `DeviceDB` extends `SingletonBase`; safe to call `DeviceDB()` repeatedly – same instance returned.
 - **ConnectionIF ABC**: all transports expose `connect / disconnect / write / read / close`. New transports must subclass it and set `DRIVER` class attribute.
-- **CRC scope**: `crc.append_tel(pdu)` appends 2 bytes; `crc.check_tel(frame)` raises `CrcError` on mismatch (or returns `False` with `silent=True`).
+- **CRC scope**: `crc.append_telegram(pdu)` appends 2 bytes; `crc.check_telegram(frame)` raises `CrcError` on mismatch (or returns `False` with `silent=True`).
 - **Python 2/3 compatibility**: codebase targets Python 2.7, 3.4, 3.5; uses `enum34` shim for Python < 3.4. Avoid Python-3-only syntax.
 
 ---

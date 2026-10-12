@@ -61,10 +61,10 @@ class WorkerThread(threading.Thread):
         super(WorkerThread, self).__init__()
         self._request = request
         self._requestorThread = requestorThread
-        self.setName(self.__class__.__name__)
+        self.name = self.__class__.__name__
 
     def run(self):
-        name = self.getName()
+        name = self.name
         resp = self._requestorThread.readFromServer()
         if resp:    # todo: Exception.
             self._requestorThread._respQueue.put(resp)
@@ -100,7 +100,7 @@ class RequestorThread(threading.Thread):
 
     def __init__(self, model):
         super(RequestorThread, self).__init__()
-        self.setName(self.__class__.__name__)
+        self.name = self.__class__.__name__
         self._connected = False
         self._currentRetry = 0
         self._model = model
@@ -110,7 +110,7 @@ class RequestorThread(threading.Thread):
 
     def run(self):
         self._model.waitForController()
-        name = self.getName()
+        name = self.name
         self.logger.info("Starting %s." % name)
         while True:
             self._model._concurrentAccess.acquire()

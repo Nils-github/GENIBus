@@ -59,7 +59,7 @@ class ControllerThread(threading.Thread):
         self._view = view
         self.quitEvent = quitEvent
         self.infoRecords = []
-        self.setName(self.__class__.__name__)
+        self.name = self.__class__.__name__
         Publisher.subscribe(self.onInfoUpdate, 'INFO')
         Publisher.subscribe(self.onPumpStatus, 'PUMP_STATUS')
         for klass in defs.APDUClass.nameDict.values():
@@ -76,7 +76,7 @@ class ControllerThread(threading.Thread):
         controls.btnResetAlarmLog.Bind(wx.EVT_BUTTON, self.onResetAlarmLog)
 
     def run(self):
-        name = self.getName()
+        name = self.name
         print("Starting %s." % name)
         while True:
             if self.quitEvent.wait(0.5):

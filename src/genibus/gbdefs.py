@@ -90,7 +90,7 @@ class APDUClass(enum.IntEnum):
     TEST_DATA                           = 6
     ASCII_STRINGS                       = 7
     MEMORY_BLOCKS                       = 8
-    EMBEDDED_PUDS                       = 9
+    EMBEDDED_PDUS                       = 9
     DATA_OBJECTS                        = 10
     SIXTEENBIT_MEASURED_DATA            = 11
     SIXTEENBIT_CONFIGURATION_PARAMETERS = 12
@@ -107,7 +107,7 @@ NICE_CLASS_NAMES: dict[APDUClass, str] = {
     APDUClass.TEST_DATA:                           "Test Data",
     APDUClass.ASCII_STRINGS:                       "ASCII Strings",
     APDUClass.MEMORY_BLOCKS:                       "Memory Blocks",
-    APDUClass.EMBEDDED_PUDS:                       "Embedded PDUs",
+    APDUClass.EMBEDDED_PDUS:                       "Embedded PDUs",
     APDUClass.DATA_OBJECTS:                        "Data Objects",
     APDUClass.SIXTEENBIT_MEASURED_DATA:            "16Bit Measured Data",
     APDUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS: "16Bit Configuration Parameters",
@@ -145,7 +145,7 @@ CLASS_CAPABILITIES: dict[APDUClass, tuple[Operation, ...]] = {
     APDUClass.TEST_DATA                           : (Operation.GET, Operation.SET, ),
     APDUClass.ASCII_STRINGS                       : (Operation.GET, ),
     APDUClass.MEMORY_BLOCKS                       : (Operation.GET, Operation.SET, ),
-    APDUClass.EMBEDDED_PUDS                       : (Operation.GET, ),
+    APDUClass.EMBEDDED_PDUS                       : (Operation.GET, ),
     APDUClass.DATA_OBJECTS                        : (Operation.GET, Operation.SET, ),
     APDUClass.SIXTEENBIT_MEASURED_DATA            : (Operation.GET, Operation.INFO),
     APDUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS : (Operation.GET, Operation.SET, Operation.INFO),

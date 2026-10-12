@@ -86,7 +86,7 @@ class APDUClass:
     TEST_DATA                           = 6
     ASCII_STRINGS                       = 7
     MEMORY_BLOCKS                       = 8
-    EMBEDDED_PUDS                       = 9
+    EMBEDDED_PDUS                       = 9
     DATA_OBJECTS                        = 10
     SIXTEENBIT_MEASURED_DATA            = 11
     SIXTEENBIT_CONFIGURATION_PARAMETERS = 12
@@ -102,7 +102,7 @@ class APDUClass:
         TEST_DATA                           : 'TEST_DATA',
         ASCII_STRINGS                       : 'ASCII_STRINGS',
         MEMORY_BLOCKS                       : 'MEMORY_BLOCKS',
-        EMBEDDED_PUDS                       : 'EMBEDDED_PUDS',
+        EMBEDDED_PDUS                       : 'EMBEDDED_PDUS',
         DATA_OBJECTS                        : 'DATA_OBJECTS',
         SIXTEENBIT_MEASURED_DATA            : 'SIXTEENBIT_MEASURED_DATA',
         SIXTEENBIT_CONFIGURATION_PARAMETERS : 'SIXTEENBIT_CONFIGURATION_PARAMETERS',
@@ -124,7 +124,7 @@ NICE_CLASS_NAMES = {
     APDUClass.TEST_DATA:                           "Test Data",
     APDUClass.ASCII_STRINGS:                       "ASCII Strings",
     APDUClass.MEMORY_BLOCKS:                       "Memory Blocks",
-    APDUClass.EMBEDDED_PUDS:                       "Embedded PDUs",
+    APDUClass.EMBEDDED_PDUS:                       "Embedded PDUs",
     APDUClass.DATA_OBJECTS:                        "Data Objects",
     APDUClass.SIXTEENBIT_MEASURED_DATA:            "16Bit Measured Data",
     APDUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS: "16Bit Configuration Parameters",
@@ -174,7 +174,7 @@ CLASS_CAPABILITIES = {
     APDUClass.TEST_DATA                           : (OS_GET, OS_SET, ),
     APDUClass.ASCII_STRINGS                       : (OS_GET, ),
     APDUClass.MEMORY_BLOCKS                       : (OS_GET, OS_SET, ),
-    APDUClass.EMBEDDED_PUDS                       : (OS_GET, ),
+    APDUClass.EMBEDDED_PDUS                       : (OS_GET, ),
     APDUClass.DATA_OBJECTS                        : (OS_GET, OS_SET, ),
     APDUClass.SIXTEENBIT_MEASURED_DATA            : (OS_GET, OS_INFO),
     APDUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS : (OS_GET, OS_SET, OS_INFO),

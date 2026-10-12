@@ -99,12 +99,12 @@ class MultipleChoiceButtons(wx.Panel):
 class ToggleButton(wx.ToggleButton):
     """Extends wx.ToggleButton with active/inactive labels.
     """
-    def __init__(self, parent, labelOn, labelOff, bgColorOn = wx.Colour(0, 255, 0)):
+    def __init__(self, parent, labelOn, labelOff, bgColourOn = wx.Colour(0, 255, 0)):
         wx.ToggleButton.__init__(self, parent = parent, label = labelOn, id = wx.ID_ANY)
         self.labelOn = labelOn
         self.labelOff = labelOff
-        self.bgColorOff = self.GetBackgroundColour()
-        self.bgColorOn = bgColorOn
+        self.bgColourOff = self.GetBackgroundColour()
+        self.bgColourOn = bgColourOn
 
         self.Bind(wx.EVT_TOGGLEBUTTON, self.buttonToggled)
 
@@ -118,10 +118,10 @@ class ToggleButton(wx.ToggleButton):
     def _setStateInternal(self, state):
         if state == True:       # Active State.
             self.SetLabel(self.labelOff)
-            self.SetBackgroundColour(self.bgColorOn)
+            self.SetBackgroundColour(self.bgColourOn)
         elif state == False:    # Inactive State.
             self.SetLabel(self.labelOn)
-            self.SetBackgroundColour(self.bgColorOff)
+            self.SetBackgroundColour(self.bgColourOff)
 
 
     def buttonToggled(self, event):

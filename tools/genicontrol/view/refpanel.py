@@ -85,7 +85,7 @@ class RefPanel(ScrolledPanel):
         btnConstFreq = wx.ToggleButton(self, label = 'Constant Frequency', id = controlids.ID_CMD_CONST_FREQ)
         groupSizer.Add(btnConstFreq, 1, wx.ALL, 5)
         btnAutoAdapt = wx.ToggleButton(self, label = 'AutoAdapt', id = controlids.ID_CMD_AUTOADAPT)
-        self.btnBgColor = btnAutoAdapt.GetBackgroundColour()
+        self.btnBgColour = btnAutoAdapt.GetBackgroundColour()
         groupSizer.Add(btnAutoAdapt, 1, wx.ALL, 5)
         self.setControlMode(CONTROL_MODE_CONSTANT_PRESSURE)
 
@@ -144,7 +144,7 @@ class RefPanel(ScrolledPanel):
         if hasattr(self, '_mode'):
             control = self.getButtonForMode(self._mode)
             control.SetValue(False)
-            control.SetBackgroundColour(self.btnBgColor)
+            control.SetBackgroundColour(self.btnBgColour)
         self._mode = mode
         control = self.getButtonForMode(mode)
         control.SetValue(True)
@@ -213,5 +213,5 @@ class RefPanel(ScrolledPanel):
         # Inactive State
         if event.EventObject.GetValue() == False:
             event.EventObject.SetLabel(event.EventObject.labelOn)
-            event.EventObject.SetBackgroundColour(event.EventObject.bgColor)
+            event.EventObject.SetBackgroundColour(event.EventObject.bgColour)
 """

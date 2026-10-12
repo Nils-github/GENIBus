@@ -7,21 +7,21 @@
 
 import wx
 
-def change_intensity(color, fac):
-    rgb = [color.Red(), color.Green(), color.Blue()]
+def change_intensity(colour, fac):
+    rgb = [colour.Red(), colour.Green(), colour.Blue()]
     for i, intensity in enumerate(rgb):
         rgb[i] = min(int(round(intensity*fac, 0)), 255)
 
-    return wx.Color(*rgb)
+    return wx.Colour(*rgb)
 
 class LED(wx.Control):
-    def __init__(self, parent, id = -1, colors = [wx.Colour(220, 10, 10), wx.Colour(250, 200, 0), wx.Colour(10, 220, 10)],
+    def __init__(self, parent, id = -1, colours = [wx.Colour(220, 10, 10), wx.Colour(250, 200, 0), wx.Colour(10, 220, 10)],
                  pos = (-1, -1), style = wx.NO_BORDER):
         size = (17, 17)
         wx.Control.__init__(self, parent, id, pos, size, style)
         self.MinSize = size
 
-        self._colors = colors
+        self._colours = colours
         self._state = -1
         self.SetState(0)
         self.Bind(wx.EVT_PAINT, self.OnPaint, self)
@@ -29,16 +29,16 @@ class LED(wx.Control):
     def SetState(self, i):
         if i < 0:
             raise ValueError, 'Cannot have a negative state value.'
-        elif i >= len(self._colors):
+        elif i >= len(self._colours):
             raise IndexError, 'There is no state with an index of %d.' % i
         elif i == self._state:
             return
 
         self._state = i
-        base_color = self._colors[i]
-        light_color = change_intensity(base_color, 1.15)
-        shadow_color = change_intensity(base_color, 1.07)
-        highlight_color = change_intensity(base_color, 1.25)
+        base_colour = self._colours[i]
+        light_colour = change_intensity(base_colour, 1.15)
+        shadow_colour = change_intensity(base_colour, 1.07)
+        highlight_colour = change_intensity(base_colour, 1.25)
 
         ascii_led = '''
         000000-----000000
@@ -60,12 +60,12 @@ class LED(wx.Control):
         000000=====000000
         '''.strip()
 
-        xpm = ['17 17 5 1', # width height ncolors chars_per_pixel
+        xpm = ['17 17 5 1', # width height ncolours chars_per_pixel
                '0 c None',
-               'X c %s' % base_color.GetAsString(wx.C2S_HTML_SYNTAX).encode('ascii'),
-               '- c %s' % light_color.GetAsString(wx.C2S_HTML_SYNTAX).encode('ascii'),
-               '= c %s' % shadow_color.GetAsString(wx.C2S_HTML_SYNTAX).encode('ascii'),
-               '* c %s' % highlight_color.GetAsString(wx.C2S_HTML_SYNTAX).encode('ascii')]
+               'X c %s' % base_colour.GetAsString(wx.C2S_HTML_SYNTAX).encode('ascii'),
+               '- c %s' % light_colour.GetAsString(wx.C2S_HTML_SYNTAX).encode('ascii'),
+               '= c %s' % shadow_colour.GetAsString(wx.C2S_HTML_SYNTAX).encode('ascii'),
+               '* c %s' % highlight_colour.GetAsString(wx.C2S_HTML_SYNTAX).encode('ascii')]
 
         xpm += [s.strip() for s in ascii_led.splitlines()]
 
@@ -90,10 +90,10 @@ class LcdTest(wx.Frame):
 
         self._p = wx.Panel(self)
 
-        colors = [wx.Color(128, 128, 128), wx.Color(192, 0, 0), wx.Color(0, 192, 0), wx.Color(0, 0, 192), ]
-        l1 = LED(self._p, colors = colors)
-        l2 = LED(self._p, colors = colors)
-        l3 = LED(self._p, colors = colors)
+        colours = [wx.Colour(128, 128, 128), wx.Colour(192, 0, 0), wx.Colour(0, 192, 0), wx.Colour(0, 0, 192), ]
+        l1 = LED(self._p, colours = colours)
+        l2 = LED(self._p, colours = colours)
+        l3 = LED(self._p, colours = colours)
         self._led_lst = (l1, l2, l3)
 
         sz = wx.BoxSizer(wx.VERTICAL)

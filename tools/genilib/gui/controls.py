@@ -38,6 +38,9 @@ def createLabeledControl(parent, label, control, sizer, group = None):
     sizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
     if group is not None:
         group.append(control)
-    sizer.Add(control, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
+    control_flags = wx.ALL
+    if not (isinstance(sizer, wx.BoxSizer) and sizer.GetOrientation() == wx.HORIZONTAL):
+        control_flags |= wx.ALIGN_RIGHT
+    sizer.Add(control, 1, control_flags, 5)
     return control
 

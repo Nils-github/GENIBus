@@ -100,7 +100,7 @@ class OptionsView(wx.Dialog):
         self.Bind(wx.EVT_CHECKBOX, self.SetLogWrite, self.logfile)
 
         line = wx.StaticLine(self, style = wx.LI_HORIZONTAL)
-        sizer.Add(line, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT | wx.TOP, 5)
+        sizer.Add(line, 0, wx.GROW | wx.RIGHT | wx.TOP, 5)
         btnsizer = wx.StdDialogButtonSizer()
         okButton = wx.Button(self, id = wx.ID_OK)
         okButton.SetDefault()
@@ -110,7 +110,7 @@ class OptionsView(wx.Dialog):
         btnsizer.AddButton(cancelButton)
 
         btnsizer.Realize()
-        sizer.Add(btnsizer, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        sizer.Add(btnsizer, 0, wx.ALL, 5)
 
         if not serialAvailable:
             radioSerial.Enable(False)

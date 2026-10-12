@@ -181,6 +181,7 @@ def createSetValuesPDU(header, parameter = [], references = []):
 
     return pdu
 
+
 def createGetInfoPDU(klass, header, measurements = [], parameter = [], references = []):
     ## To be defensive, at most 15 datapoints should be requested at once (min.frame length = 70 bytes).
     if not isinstance(header, Header):
@@ -218,6 +219,7 @@ def createGetInfoPDU(klass, header, measurements = [], parameter = [], reference
 
     return pdu
 
+
 def createSetCommandsPDU(header, commands):
     if not isinstance(header, Header):
         raise TypeError('Parameter "header" must be of type "Header".')
@@ -233,9 +235,8 @@ def createSetCommandsPDU(header, commands):
     pdu.extend(commandsAPDU)
 
     pdu = genibus.utils.crc.append_telegram(pdu)
- 
-    return pdu
 
+    return pdu
 
 
 def createConnectRequestPDU(sourceAddr):

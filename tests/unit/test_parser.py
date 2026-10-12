@@ -40,7 +40,7 @@ def test_parse_frame_rejects_short_frame() -> None:
 
 def test_parse_frame_rejects_unknown_apdu_class() -> None:
     base = bytearray([0x27, 0x04, 0x20, 0x01, 0x0E, 0x00])
-    frame = crc.append_tel(base)
+    frame = crc.append_telegram(base)
 
     with pytest.raises(parser.APDUClassNotSupportedError):
         parser.parse_frame(frame)

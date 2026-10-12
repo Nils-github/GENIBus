@@ -114,7 +114,7 @@ def _to_hex(data):
     return [value for value in data]
 
 
-def test_crc_legacy_vectors() -> None:
+def test_crc_vectors() -> None:
     for vector in CRC_TEST_VECTORS:
         assert check_telegram(vector)
 

@@ -23,7 +23,7 @@ def _build_request(
     ]
     frame.extend(data)
     frame[defs.LENGTH] = len(frame) - 2
-    return bytearray(crc.append_tel(frame))
+    return bytearray(crc.append_telegram(frame))
 
 
 def _class_item_ids(klass: defs.APDUClass) -> dict[str, int]:
@@ -126,7 +126,7 @@ def test_process_frame_rejects_invalid_operation_code() -> None:
         measured_ids["h"],
     ]
     frame[defs.LENGTH] = len(frame) - 2
-    req = bytearray(crc.append_tel(frame))
+    req = bytearray(crc.append_telegram(frame))
 
     with pytest.raises(defs.IllegalOperationError):
         sim.process_frame(req)

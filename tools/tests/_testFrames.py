@@ -1,7 +1,7 @@
 
 import unittest
 
-from genilib.utils.crc import calculate_crc
+from genibus.utils.crc import calculate_crc
 import genilib.utils as utils
 import genicontrol.defs as defs
 #import genicontrol.dataitems as dataitems

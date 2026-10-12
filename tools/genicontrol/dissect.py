@@ -31,7 +31,7 @@ import logging
 
 import genilib.utils as utils
 import genicontrol.defs as defs
-import genilib.utils.crc as crc
+import genibus.utils.crc as crc
 
 logger = logging.getLogger("GeniControl")
 

@@ -38,7 +38,7 @@ import genicontrol.dataitems as dataitems
 import genicontrol.defs as defs
 from genicontrol.defs import Info, Item
 import genicontrol.units as units
-import genilib.utils.crc as crc
+import genibus.utils.crc as crc
 import genilib.utils as utils
 from genilib.utils import dumpHex
 

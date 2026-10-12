@@ -28,7 +28,7 @@
 
 import unittest
 
-from genilib.utils.crc import check_telegram
+from genibus.utils.crc import check_telegram
 
 TEST_VECTORS = (
     (0x27, 0x07, 0x20, 0x01, 0x02, 0xC3, 0x02, 0x10, 0x1A),

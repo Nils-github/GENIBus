@@ -23,8 +23,8 @@ The CRC bytes are appended as `CRC_HI`, `CRC_LO`.
 
 In Python code this corresponds to:
 
-- append: `genibus.utils.crc.append_tel(...)`
-- check: `genibus.utils.crc.check_tel(...)`
+- append: `genibus.utils.crc.append_telegram(...)`
+- check: `genibus.utils.crc.check_telegram(...)`
 
 ## APDU Header
 

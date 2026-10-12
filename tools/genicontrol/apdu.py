@@ -30,8 +30,8 @@ import array
 import logging
 import genicontrol.dataitems as dataitems
 import genicontrol.defs as defs
-import genilib.utils.crc
-from genilib.utils import bytes, dumpHex
+import genibus.utils.crc
+import genilib.utils
 
 logger = logging.getLogger("genibus")
 
@@ -149,7 +149,7 @@ def createGetValuesPDU(klass, header, protocolData = [], measurements = [], para
     if strings:
         pdu.extend(stringsAPDU)
 
-    pdu = genilib.utils.crc.append_telegram(pdu)
+    pdu = genibus.utils.crc.append_telegram(pdu)
 
     return pdu
 
@@ -177,7 +177,7 @@ def createSetValuesPDU(header, parameter = [], references = []):
     if references:
         pdu.extend(referencesAPDU)
 
-    pdu = genilib.utils.crc.append_telegram(pdu)
+    pdu = genibus.utils.crc.append_telegram(pdu)
 
     return pdu
 
@@ -214,7 +214,7 @@ def createGetInfoPDU(klass, header, measurements = [], parameter = [], reference
     if references:
         pdu.extend(referencesAPDU)
 
-    pdu = genilib.utils.crc.append_telegram(pdu)
+    pdu = genibus.utils.crc.append_telegram(pdu)
 
     return pdu
 
@@ -232,7 +232,7 @@ def createSetCommandsPDU(header, commands):
 
     pdu.extend(commandsAPDU)
 
-    pdu = genilib.utils.crc.append_telegram(pdu)
+    pdu = genibus.utils.crc.append_telegram(pdu)
  
     return pdu
 
@@ -254,13 +254,13 @@ def createSetRemotePDU(sourceAddr):
     )
 
 if __name__ == '__main__':
-    print(dumpHex(createConnectRequestPDU(0x01)))
+    print(genilib.utils.dumpHex(createConnectRequestPDU(0x01)))
 
-    print(dumpHex(createSetCommandsPDU(Header(defs.SD_DATA_REQUEST, 0x20, 0x01), ['REMOTE', 'START'])))
+    print(genilib.utils.dumpHex(createSetCommandsPDU(Header(defs.SD_DATA_REQUEST, 0x20, 0x01), ['REMOTE', 'START'])))
 
-    print(dumpHex(createSetValuesPDU(Header(defs.SD_DATA_REQUEST, 0x20, 0x01), references = [('ref_rem', 0xa5, )])))
+    print(genilib.utils.dumpHex(createSetValuesPDU(Header(defs.SD_DATA_REQUEST, 0x20, 0x01), references = [('ref_rem', 0xa5, )])))
 
-    print(dumpHex(createGetInfoPDU(
+    print(genilib.utils.dumpHex(createGetInfoPDU(
         Header(defs.SD_DATA_REQUEST, 0x20, 0x01),
         measurements = ['h', 'q', 'p', 't_w', 'speed_hi', 'energy_hi'])
     ))

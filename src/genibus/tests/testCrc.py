@@ -29,7 +29,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import unittest
 
-from genibus.utils.crc import check_tel
+from genibus.utils.crc import check_telegram
 
 TEST_VECTORS = (
     (0x27, 0x07, 0x20, 0x01, 0x02, 0xC3, 0x02, 0x10, 0x1A, 0x90, 0x1c),
@@ -43,22 +43,22 @@ TEST_VECTORS = (
 class TestCRC(unittest.TestCase):
 
     def test01(self):
-        self.assertTrue(check_tel(TEST_VECTORS[0]))
+        self.assertTrue(check_telegram(TEST_VECTORS[0]))
 
     def test02(self):
-        self.assertTrue(check_tel(TEST_VECTORS[1]))
+        self.assertTrue(check_telegram(TEST_VECTORS[1]))
 
     def test03(self):
-        self.assertTrue(check_tel(TEST_VECTORS[2]))
+        self.assertTrue(check_telegram(TEST_VECTORS[2]))
 
     def test04(self):
-        self.assertTrue(check_tel(TEST_VECTORS[3]))
+        self.assertTrue(check_telegram(TEST_VECTORS[3]))
 
     def test05(self):
-        self.assertTrue(check_tel(TEST_VECTORS[4]))
+        self.assertTrue(check_telegram(TEST_VECTORS[4]))
 
     def test06(self):
-        self.assertTrue(check_tel(TEST_VECTORS[5]))
+        self.assertTrue(check_telegram(TEST_VECTORS[5]))
 
 
 def main():

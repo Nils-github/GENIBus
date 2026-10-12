@@ -1,6 +1,6 @@
 import genibus.apdu as apdu
 import genibus.gbdefs as defs
-from genibus.utils.crc import check_tel
+from genibus.utils.crc import check_telegram
 
 CRC_TEST_VECTORS = (
     (0x27, 0x07, 0x20, 0x01, 0x02, 0xC3, 0x02, 0x10, 0x1A, 0x90, 0x1C),
@@ -116,7 +116,7 @@ def _to_hex(data):
 
 def test_crc_legacy_vectors() -> None:
     for vector in CRC_TEST_VECTORS:
-        assert check_tel(vector)
+        assert check_telegram(vector)
 
 
 def test_apdu_connect_request_vector() -> None:

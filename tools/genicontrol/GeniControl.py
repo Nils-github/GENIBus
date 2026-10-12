@@ -73,8 +73,7 @@ class BusmonitorPanel(wx.Panel):
     def formatTelegram(self, rxTx, telegram):
         timestamp = time.strftime("%d/%b/%Y %H:%M:%S")
         rt = "Rx" if rxTx else "Tx"
-        if not isinstance(telegram, (list, tuple, array.array)):
-            #print("WARNING '%s' isn't a correct telegram!")
+        if not isinstance(telegram, (list, tuple, bytearray, array.array)):
             return "[%s] %s - INVALID!\n"  % (timestamp, rt, )
         formattedTelegram = ' '.join(["0x%02x" % x for x in telegram])
         return "[%s] %s - %s\n" % (timestamp, rt, formattedTelegram)
@@ -87,7 +86,7 @@ class BusmonitorPanel(wx.Panel):
 
 class TestNB(wx.Notebook):
     def __init__(self, parent, id):
-        wx.Notebook.__init__(self, parent, id, size = (21, 21), style = wx.BK_DEFAULT | wx.BK_BOTTOM)
+        wx.Notebook.__init__(self, parent, id, style = wx.NB_TOP)
         self.mcPanel = MCPanel(self)
         self.AddPage(self.mcPanel, "Measurement + Control")
         self.bmPanel = BusmonitorPanel(self)

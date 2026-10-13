@@ -35,8 +35,8 @@ import genicontrol.conversion as conversion
 from genicontrol.connection import ConnectionIF
 from genicontrol.dissect import dissectResponse
 import genicontrol.dataitems as dataitems
-import genicontrol.defs as defs
-from genicontrol.defs import Info, Item
+import genibus.gbdefs as defs
+from genibus.gbdefs import Info, Item
 import genicontrol.units as units
 import genibus.utils.crc as crc
 import genilib.utils as utils
@@ -194,15 +194,18 @@ def createResponse(request):
         klass = a.klass
         ack = a.ack
         data = a.data
-        dataItemsByName = dict([(a, (b, c)) for a, b ,c in DATA_POOL[klass]])
+        dataItemsByName = {
+            item.name: (item.value, item.info)
+            for item in DATA_POOL[klass]
+        }
 
         if ack not in defs.CLASS_CAPABILITIES[klass]:
-            raise defs.IllegalOperationError("%s-Operation not supported." % defs.operationToString(ack))
+            raise defs.IllegalOperationError("%s operation not supported." % defs.Operation(ack).name)
         dataItemsById = dict([(v[2], (k, v[3], v[4])) for k, v in dataitems.DATAITEMS_FOR_CLASS[klass].items()])
         apduLength = 0
         length += 2
         pdu = []
-        if ack == defs.OS_SET:
+        if ack == defs.Operation.SET:
             pass # Ack = OK, Length = 0 is inherently generated!
         else:
             for item in data:
@@ -211,7 +214,7 @@ def createResponse(request):
                     continue
                 #print("KLASS: %s NAME: %s " % (klass, name))
                 value, info = dataItemsByName[name]
-                if ack == defs.OS_GET:
+                if ack == defs.Operation.GET:
                     if klass == 11:
                         apduLength += 2 # 16-bit data values.
                         value1 = 0xff if value is None else value
@@ -222,7 +225,7 @@ def createResponse(request):
                         apduLength += 1 # 8-bit data values.
                         value1 = 0xff if value is None else value
                         pdu.append(value)
-                elif ack == defs.OS_INFO:
+                elif ack == defs.Operation.INFO:
                     sif = info.head & 0b11
                     pdu.append(info.head)
                     if sif in (0, 1):
@@ -238,7 +241,7 @@ def createResponse(request):
         da = getParameterValue('unit_addr') # Handle connection address.
     else:
         da = request.da
-    result.extend([defs.SD_DATA_REPLY, length, request.sa, da])
+    result.extend([defs.FrameType.SD_DATA_REPLY, length, request.sa, da])
     for pdu in pdus:
         klass, apduLength, pdu = pdu
         result.append(klass)
@@ -319,13 +322,13 @@ def createStaticTelegrams(destAddr):
         for idx, slice in enumerate(slices):
             slice = [n for n,i in slice]
             if klass == defs.APDUClass.MEASURED_DATA:
-                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), measurements = slice)
+                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.FrameType.SD_DATA_REQUEST, destAddr, 0x01), measurements = slice)
             elif klass == defs.APDUClass.REFERENCE_VALUES:
-                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), references = slice)
+                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.FrameType.SD_DATA_REQUEST, destAddr, 0x01), references = slice)
             elif klass == defs.APDUClass.CONFIGURATION_PARAMETERS:
-                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), parameter = slice)
+                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.FrameType.SD_DATA_REQUEST, destAddr, 0x01), parameter = slice)
             elif klass == defs.APDUClass.SIXTEENBIT_MEASURED_DATA:
-                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), measurements = slice)
+                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.FrameType.SD_DATA_REQUEST, destAddr, 0x01), measurements = slice)
             printTuple(telegram, "INFO_REQUEST%u" % idx)
 
 import sys
@@ -338,10 +341,14 @@ class MyList(list):
 def rawInterpreteResponse(response, datapoints, valueInterpretation):
     result = MyList()
     for apdu in response.APDUs:
-        if valueInterpretation == defs.OS_GET:
-            dataItemsByName = dict([(a, (b, c)) for a, b ,c in DATA_POOL[apdu.klass]])
+        if valueInterpretation == defs.Operation.GET:
+            dataItemsByName = {
+                item.name: (item.value, item.info)
+                for item in DATA_POOL[apdu.klass]
+            }
             for name, value in zip(datapoints, apdu.data):
-                _, (head, unit, zero, range) = dataItemsByName[name]
+                info = dataItemsByName[name][1]
+                head, unit, zero, range = info.head, info.unit, info.zero, info.range
                 if head == 0x82:
                     unitInfo = units.UnitTable[unit]
                     result.append(ValueType(name, unitInfo.unit, conversion.convertForward8(value, zero, range, unitInfo.factor)))
@@ -350,7 +357,7 @@ def rawInterpreteResponse(response, datapoints, valueInterpretation):
                     result.append(ValueType(name, unitInfo.unit, conversion.convertExtended16(value, zero, range, unitInfo.factor)))
                 else:
                     result.append(ValueType(name, None, value))
-        elif valueInterpretation == defs.OS_INFO:
+        elif valueInterpretation == defs.Operation.INFO:
             idx = 0
             values = []
             for datapoint in datapoints:
@@ -362,7 +369,7 @@ def rawInterpreteResponse(response, datapoints, valueInterpretation):
                 else:
                     result.append(Info(data, apdu.data[idx + 1], apdu.data[idx + 2], apdu.data[idx + 3]))
                     idx += 4
-        elif valueInterpretation == defs.OS_SET:
+        elif valueInterpretation == defs.Operation.SET:
             result.append(AckType(apdu.klass, apdu.ack >> 6))
     result.type = valueInterpretation
     return result
@@ -371,22 +378,21 @@ def main():
     createStaticTelegrams(0x20)
     telegram = apdu.createGetValuesPDU(
         defs.APDUClass.MEASURED_DATA,
-        apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01),
+        apdu.Header(defs.FrameType.SD_DATA_REQUEST, 0x20, 0x01),
         measurements=dataReqValues,
     )
-    testResponse(telegram, dataReqValues, defs.OS_GET)
+    testResponse(telegram, dataReqValues, defs.Operation.GET)
 
     telegram = apdu.createGetInfoPDU(
         defs.APDUClass.MEASURED_DATA,
-        apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01),
+        apdu.Header(defs.FrameType.SD_DATA_REQUEST, 0x20, 0x01),
         measurements=infoReqValues,
     )
-    testResponse(telegram, infoReqValues, defs.OS_INFO)
+    testResponse(telegram, infoReqValues, defs.Operation.INFO)
 
-    telegram = apdu.createSetCommandsPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01), commands = commandSetValues)
-    testResponse(telegram, commandSetValues, defs.OS_SET)
+    telegram = apdu.createSetCommandsPDU(apdu.Header(defs.FrameType.SD_DATA_REQUEST, 0x20, 0x01), commands = commandSetValues)
+    testResponse(telegram, commandSetValues, defs.Operation.SET)
 
 
 if __name__ == '__main__':
     main()
-

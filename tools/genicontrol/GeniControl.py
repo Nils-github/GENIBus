@@ -44,11 +44,11 @@ from genicontrol.model.NullModel import NullModel
 from genicontrol.model.config import DataitemConfiguration
 from genicontrol.controller.GUIController import GUIController
 import genicontrol.controlids as controlids
-import genicontrol.defs as defs
+import genibus.gbdefs as defs
 from genilib.configuration import Config
 from genicontrol.view.options import showOptionsDialog
 from genilib.gui.menu import Menu, MenuItem, MenuSeparator, createMenuBar
-from genilib.utils import dumpHex
+from genilib.utils import CONFIGURATION_DIRECTORY, dumpHex
 
 TR = wx.GetTranslation
 pumptype = 0
@@ -66,7 +66,7 @@ class BusmonitorPanel(wx.Panel):
         self.SetSizerAndFit(sizer)
         self.logFile =  None
         if self.logfilewanted == '1':
-            self.logFile =  open(os.path.join(defs.CONFIGURATION_DIRECTORY, 'busmonitor.log'), 'w')
+            self.logFile =  open(os.path.join(CONFIGURATION_DIRECTORY, 'busmonitor.log'), 'w')
 
     def __del__(self):
         if self.logFile:
@@ -313,4 +313,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

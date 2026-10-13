@@ -29,14 +29,21 @@
 import json
 import logging
 import threading
+from dataclasses import asdict, is_dataclass
 import wx
 from genicontrol.model.config import DataitemConfiguration
-import genicontrol.defs as defs
+import genibus.gbdefs as defs
 from genicontrol.scaling import getScalingInfo
 from genicontrol.controller.ControllerIF import IController
 import genicontrol.dd as dd
 from pubsub import pub as Publisher
 from wx import CallAfter
+
+
+def _json_default(value):
+    if is_dataclass(value) and not isinstance(value, type):
+        return asdict(value)
+    raise TypeError("Object of type %s is not JSON serializable" % type(value).__name__)
 
 
 class InfoWriter(object):
@@ -62,8 +69,8 @@ class ControllerThread(threading.Thread):
         self.name = self.__class__.__name__
         Publisher.subscribe(self.onInfoUpdate, 'INFO')
         Publisher.subscribe(self.onPumpStatus, 'PUMP_STATUS')
-        for klass in defs.APDUClass.nameDict.values():
-            Publisher.subscribe(self.onChange, klass)
+        for klass in defs.APDUClass:
+            Publisher.subscribe(self.onChange, klass.name)
 
         controls = self._view.notebook.mcPanel.controlsPanel
         controls.btnOperationMode.Bind(controls.btnOperationMode.EVT_BUTTON_CHANGED, self.onOperationModeChanged)
@@ -90,7 +97,7 @@ class ControllerThread(threading.Thread):
         #unitVersion = self._model.getValue(defs.APDUClass.MEASURED_DATA, 'unit_version') ## TODO: Fixme!
         else:
             with open(dd.getDeviceFilePath(unitFamily, unitType, 1), 'w') as outf:
-                json.dump(self.infoRecords, outf, indent=2, ensure_ascii=False)
+                json.dump(self.infoRecords, outf, indent=2, ensure_ascii=False, default=_json_default)
 
         print("Exiting %s." % name)
 
@@ -178,4 +185,3 @@ class GUIController(IController):
         self._controllerThread.join()
         self._model.quit()
         self._view.shutdownView()
-

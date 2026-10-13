@@ -32,6 +32,11 @@ import logging
 
 logger = logging.getLogger("GeniControl")
 
+CONNECTION_SIMULATOR = 0
+CONNECTION_GENBUS_TCP = 1
+CONNECTION_GENIBUS_DLL = 2
+
+
 class ConnectionIF(object):
     __metaclass__ = abc.ABCMeta
     logger = logging.getLogger("GeniControl")

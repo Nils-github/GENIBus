@@ -28,14 +28,14 @@
 
 __all__ = [
     'COMMANDS', 'MEASUREMENT_VALUES', 'REFERENCES', 'PARAMETER', 'STRINGS', 'SIXTEENBIT_MEASUREMENT_VALUES',
-    'DATAITEMS', 'defs.ACC_RO', 'defs.ACC_WO', 'defs.ACC_WR'
+    'DATAITEMS', 'defs.Access.RO', 'defs.Access.WO', 'defs.Access.WR'
 ]
 
 from collections import namedtuple
 import json
 from pathlib import Path
 
-import genicontrol.defs as defs
+import genibus.gbdefs as defs
 
 _DEVICE_MODELS_DIR = Path(__file__).resolve().parents[2] / 'src' / 'genibus' / 'devices'
 
@@ -189,4 +189,3 @@ Code Alarm Group Alarm Cause
 91 Temperature Sensor signal fault
 92 (Feedback) Sensor calibration fault
 """
-

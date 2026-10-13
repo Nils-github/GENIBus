@@ -30,7 +30,7 @@ from collections import namedtuple
 import logging
 
 import genilib.utils as utils
-import genicontrol.defs as defs
+import genibus.gbdefs as defs
 import genibus.utils.crc as crc
 
 logger = logging.getLogger("GeniControl")
@@ -43,6 +43,16 @@ APDU_DATA       = 2
 APDU = namedtuple('APDU', 'klass ack data')
 DissectionResult = namedtuple('DissectionResult', 'sd da sa APDUs')
 
+SUPPORTED_CLASSES = (
+    defs.APDUClass.PROTOCOL_DATA,
+    defs.APDUClass.MEASURED_DATA,
+    defs.APDUClass.COMMANDS,
+    defs.APDUClass.CONFIGURATION_PARAMETERS,
+    defs.APDUClass.REFERENCE_VALUES,
+    defs.APDUClass.ASCII_STRINGS,
+    defs.APDUClass.SIXTEENBIT_MEASURED_DATA,
+)
+
 class APDUClassNotSupportedError(Exception): pass
 class FramingError(Exception): pass
 
@@ -52,7 +62,7 @@ def dissectResponse(frame):
     crc.check_telegram(frame)
     sd = arr[defs.START_DELIMITER]
     length = arr[defs.LENGTH]
-    da = arr[defs.DESTINATION_ADRESS]
+    da = arr[defs.DESTINATION_ADDRESS]
     sa = arr[defs.SOURCE_ADDRESS]
 
     dissectingState = APDU_HEADER0
@@ -66,7 +76,7 @@ def dissectResponse(frame):
         ch = arr[idx]
         if dissectingState == APDU_HEADER0:
             klass = ch & 0x0f
-            if klass not in defs.SUPPORTED_CLASSES:
+            if klass not in SUPPORTED_CLASSES:
                 # Well, to be precise, these classes are not really documented by the GENIBus spec...
                 raise APDUClassNotSupportedError("APDU class '%u' not supported by GeniControl." % klass)
             dissectingState = APDU_HEADER1
@@ -164,4 +174,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

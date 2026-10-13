@@ -29,7 +29,7 @@
 import array
 import logging
 import genicontrol.dataitems as dataitems
-import genicontrol.defs as defs
+import genibus.gbdefs as defs
 import genibus.utils.crc
 import genilib.utils
 
@@ -62,39 +62,39 @@ def createAPDUNoData(klass, op, datapoints):
     return result
 
 def createGetInfoAPDU(klass, datapoints):
-    result = createAPDUNoData(klass, defs.OS_INFO, datapoints)
+    result = createAPDUNoData(klass, defs.Operation.INFO, datapoints)
     return result
 
 def createGetMeasuredDataAPDU(klass, datapoints):
-    result = createAPDUNoData(klass, defs.OS_GET, datapoints)
+    result = createAPDUNoData(klass, defs.Operation.GET, datapoints)
     return result
 
 def createSetCommandsAPDU(datapoints):
-    result = createAPDUNoData(defs.APDUClass.COMMANDS, defs.OS_SET, datapoints)
+    result = createAPDUNoData(defs.APDUClass.COMMANDS, defs.Operation.SET, datapoints)
     return result
 
 def createGetReferencesAPDU(datapoints):
-    result = createAPDUNoData(defs.APDUClass.REFERENCE_VALUES, defs.OS_GET, datapoints)
+    result = createAPDUNoData(defs.APDUClass.REFERENCE_VALUES, defs.Operation.GET, datapoints)
     return result
 
 def createSetReferencesAPDU(datapoints):
-    result = createAPDU(defs.APDUClass.REFERENCE_VALUES, defs.OS_SET, datapoints)
+    result = createAPDU(defs.APDUClass.REFERENCE_VALUES, defs.Operation.SET, datapoints)
     return result
 
 def createGetStringsAPDU(datapoints):
-    result = createAPDUNoData(defs.APDUClass.ASCII_STRINGS, defs.OS_GET, datapoints)
+    result = createAPDUNoData(defs.APDUClass.ASCII_STRINGS, defs.Operation.GET, datapoints)
     return result
 
 def createGetParametersAPDU(datapoints):
-    result = createAPDUNoData(defs.APDUClass.CONFIGURATION_PARAMETERS, defs.OS_GET, datapoints)
+    result = createAPDUNoData(defs.APDUClass.CONFIGURATION_PARAMETERS, defs.Operation.GET, datapoints)
     return result
 
 def createSetParametersAPDU(datapoints):
-    result = createAPDU(defs.APDUClass.CONFIGURATION_PARAMETERS, defs.OS_SET, datapoints)
+    result = createAPDU(defs.APDUClass.CONFIGURATION_PARAMETERS, defs.Operation.SET, datapoints)
     return result
 
 def createGetProtocolDataAPDU(datapoints):
-    result = createAPDUNoData(defs.APDUClass.PROTOCOL_DATA, defs.OS_GET, datapoints)
+    result = createAPDUNoData(defs.APDUClass.PROTOCOL_DATA, defs.Operation.GET, datapoints)
     return result
 
 
@@ -241,7 +241,7 @@ def createSetCommandsPDU(header, commands):
 
 def createConnectRequestPDU(sourceAddr):
     return createGetValuesPDU(2,
-        Header(defs.SD_DATA_REQUEST, defs.CONNECTION_REQ_ADDR, sourceAddr),
+        Header(defs.FrameType.SD_DATA_REQUEST, defs.CONNECTION_REQ_ADDR, sourceAddr),
         measurements =  ['unit_family', 'unit_type'],
         protocolData =  ['buf_len', 'unit_bus_mode'],
         parameter =     ['unit_addr',  'group_addr']
@@ -250,19 +250,18 @@ def createConnectRequestPDU(sourceAddr):
 
 def createSetRemotePDU(sourceAddr):
     return createSetCommandsPDU(
-        Header(defs.SD_DATA_REQUEST, 0x20, sourceAddr),
+        Header(defs.FrameType.SD_DATA_REQUEST, 0x20, sourceAddr),
         commands = ['REMOTE']
     )
 
 if __name__ == '__main__':
     print(genilib.utils.dumpHex(createConnectRequestPDU(0x01)))
 
-    print(genilib.utils.dumpHex(createSetCommandsPDU(Header(defs.SD_DATA_REQUEST, 0x20, 0x01), ['REMOTE', 'START'])))
+    print(genilib.utils.dumpHex(createSetCommandsPDU(Header(defs.FrameType.SD_DATA_REQUEST, 0x20, 0x01), ['REMOTE', 'START'])))
 
-    print(genilib.utils.dumpHex(createSetValuesPDU(Header(defs.SD_DATA_REQUEST, 0x20, 0x01), references = [('ref_rem', 0xa5, )])))
+    print(genilib.utils.dumpHex(createSetValuesPDU(Header(defs.FrameType.SD_DATA_REQUEST, 0x20, 0x01), references = [('ref_rem', 0xa5, )])))
 
     print(genilib.utils.dumpHex(createGetInfoPDU(
-        Header(defs.SD_DATA_REQUEST, 0x20, 0x01),
+        Header(defs.FrameType.SD_DATA_REQUEST, 0x20, 0x01),
         measurements = ['h', 'q', 'p', 't_w', 'speed_hi', 'energy_hi'])
     ))
-

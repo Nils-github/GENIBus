@@ -178,4 +178,3 @@ class Item:
     name: str
     value: int
     info: Info
-

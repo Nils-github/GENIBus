@@ -38,7 +38,7 @@ from genicontrol.request import RequestorThread
 from genicontrol.scaling import getScalingInfo
 from genicontrol.dissect import dissectPumpStatus
 import genicontrol.dataitems as dataitems
-import genicontrol.defs as defs
+import genibus.gbdefs as defs
 from genicontrol.simu.Simulator import SimulationServer
 from genilib.utils import dumpHex, makeWord
 
@@ -122,7 +122,7 @@ class NullModel(ModelIf.IModel):
         print("Command requested:", command)
         self._commandRequested = True
         req = apdu.createSetCommandsPDU(
-            apdu.Header(defs.SD_DATA_REQUEST, self.getUnitAddress(), 0x01),
+            apdu.Header(defs.FrameType.SD_DATA_REQUEST, self.getUnitAddress(), 0x01),
             [command]
         )
         self.writeToServer(req)
@@ -196,7 +196,7 @@ class NullModel(ModelIf.IModel):
     def setValue(self, group, datapoint, value):
         self._setValueLock.acquire()
         self._valueDict.setdefault(group, dict())[datapoint] = value
-        self.sendMessage("%s.%s" % (defs.APDUClass.toString(group), datapoint), value)
+        self.sendMessage("%s.%s" % (group.name, datapoint), value)
         self._setValueLock.release()
 
     def getValue(self, group, datapoint):
@@ -220,8 +220,6 @@ class NullModel(ModelIf.IModel):
 def createDataDictionary():
     ddict = dict()
 
-    # klasses = [x for x in dir(defs.APDUClass) if x.upper() and not x.startswith('__')]
-    klasses = defs.APDUClass.nameDict.keys()
-    for klass in klasses:
+    for klass in defs.APDUClass:
         ddict[klass] = {}
     return ddict

@@ -3,7 +3,7 @@ import unittest
 
 from genibus.utils.crc import calculate_crc
 import genilib.utils as utils
-import genicontrol.defs as defs
+import genibus.gbdefs as defs
 #import genicontrol.dataitems as dataitems
 #from genicontrol.simu.Simulator import DATA_POOL
 
@@ -328,4 +328,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

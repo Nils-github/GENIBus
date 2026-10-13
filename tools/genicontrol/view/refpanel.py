@@ -32,7 +32,7 @@ import wx
 import math
 import threading
 import genicontrol.apdu as apdu
-import genicontrol.defs as defs
+import genibus.gbdefs as defs
 #import genicontrol.model.ModelIf as ModelIf
 from wx.lib.scrolledpanel import ScrolledPanel
 import genicontrol.dataitems as dataitems
@@ -194,7 +194,7 @@ class RefPanel(ScrolledPanel):
         self._concurrentAccess.acquire()
         self._refsetRequested = True
         req = apdu.createSetValuesPDU(
-            apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01),
+            apdu.Header(defs.FrameType.SD_DATA_REQUEST, 0x20, 0x01),
             references = [('ref_rem', int(self.setRefValue()))]
         )
         #print("onRefSet:", int(self.setRefValue()), dumpHex(req))

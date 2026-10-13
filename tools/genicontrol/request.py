@@ -37,7 +37,7 @@ import time
 import queue
 
 import genicontrol.apdu as apdu
-import genicontrol.defs as defs
+import genibus.gbdefs as defs
 from genicontrol.dissect import dissectResponse
 from genilib.utils import dumpHex, makeWord
 import genicontrol.dataitems as dataitems
@@ -128,14 +128,14 @@ class RequestorThread(threading.Thread):
             elif self.getState() == RequestorThread.STATE_REQ_PARAM:
                 self._requestedDatapoints = ('ref_rem', 'ref_ir')
                 req = apdu.createGetValuesPDU(defs.APDUClass.REFERENCE_VALUES,
-                    apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
+                    apdu.Header(defs.FrameType.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
                     references = self._requestedDatapoints
                 )
                 self.request(req)
                 self._requestedDatapoints = ('ref_act', 'sys_fb', 'r_min', 'r_max'
                 )
                 req = apdu.createGetValuesPDU(defs.APDUClass.MEASURED_DATA, 
-                    apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
+                    apdu.Header(defs.FrameType.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
                     measurements = self._requestedDatapoints
                 )
                 self.request(req)
@@ -143,7 +143,7 @@ class RequestorThread(threading.Thread):
                     'h_prop_ref_min', 'h_prop_ref_max'
                 )
                 req = apdu.createGetValuesPDU(defs.APDUClass.CONFIGURATION_PARAMETERS,
-                    apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
+                    apdu.Header(defs.FrameType.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
                     parameter = self._requestedDatapoints
                 )
                 self.request(req)
@@ -153,7 +153,7 @@ class RequestorThread(threading.Thread):
                      'led_contr', 'contr_source', 'energy_hi', 'energy_lo', 't_2hour_hi', 't_2hour_lo'
                 )
                 req = apdu.createGetValuesPDU(defs.APDUClass.MEASURED_DATA, 
-                    apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
+                    apdu.Header(defs.FrameType.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
                     measurements = self._requestedDatapoints
                 )
                 self.request(req)
@@ -165,7 +165,7 @@ class RequestorThread(threading.Thread):
                 )
                 if self._requestedDatapoints:
                     req = apdu.createGetValuesPDU(class_16bit,
-                        apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
+                        apdu.Header(defs.FrameType.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
                         measurements=self._requestedDatapoints
                     )
                     self.request(req)
@@ -310,13 +310,13 @@ def createInfoRequestTelegrams(destAddr):
         for idx, slice in enumerate(slices):
             slice = [n for n,i in slice]
             if klass == defs.APDUClass.MEASURED_DATA:
-                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), measurements = slice)
+                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.FrameType.SD_DATA_REQUEST, destAddr, 0x01), measurements = slice)
             elif klass == defs.APDUClass.REFERENCE_VALUES:
-                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), references = slice)
+                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.FrameType.SD_DATA_REQUEST, destAddr, 0x01), references = slice)
             elif klass == defs.APDUClass.CONFIGURATION_PARAMETERS:
-                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), parameter = slice)
+                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.FrameType.SD_DATA_REQUEST, destAddr, 0x01), parameter = slice)
             elif klass == defs.APDUClass.SIXTEENBIT_MEASURED_DATA:
-                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), measurements = slice)
+                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.FrameType.SD_DATA_REQUEST, destAddr, 0x01), measurements = slice)
             result.append((telegram, slice, ))
     return result
 
@@ -390,4 +390,3 @@ for item in source():
 
 q.join()
 """
-

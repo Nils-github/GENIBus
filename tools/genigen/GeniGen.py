@@ -38,7 +38,8 @@ import wx
 from wx.lib.scrolledpanel import ScrolledPanel
 from genilib.configuration import Config as Config
 from genilib.configuration import readConfigFile
-from genicontrol.defs import CLASS_CAPABILITIES, NICE_CLASS_NAMES, OS_GET, OS_SET, OS_INFO, HOME_DIRECTORY
+from genibus.gbdefs import CLASS_CAPABILITIES, NICE_CLASS_NAMES, Operation
+from genilib.utils import HOME_DIRECTORY
 
 from genilib.gui.menu import Menu, MenuItem, MenuSeparator, createMenuBar, getMenuItem
 from genicontrol.dataitems import DATAITEMS
@@ -134,9 +135,9 @@ class ClassPanel(ScrolledPanel):
         self.model = parent.model # Create a reference to model.
 
         numberOfItems = len(root.items)
-        get = OS_GET in root.capabilities
-        set_ = OS_SET in root.capabilities
-        info = OS_INFO in root.capabilities
+        get = Operation.GET in root.capabilities
+        set_ = Operation.SET in root.capabilities
+        info = Operation.INFO in root.capabilities
         #print("Number of Item in '%s' panel: %u" % (root.name, len(root.items)))
 
         self.controlMap = {}
@@ -149,13 +150,13 @@ class ClassPanel(ScrolledPanel):
             st.SetToolTip(wx.ToolTip(item.note))
             if get:
                 newId = self.addCheckBox(sizer, idx, 1)
-                self.controlMap[newId] = Control(OS_GET, item)
+                self.controlMap[newId] = Control(Operation.GET, item)
             if set_:
                 newId = self.addCheckBox(sizer, idx, 2)
-                self.controlMap[newId] = Control(OS_SET, item)
+                self.controlMap[newId] = Control(Operation.SET, item)
             if info:
                 newId = self.addCheckBox(sizer, idx, 3)
-                self.controlMap[newId] = Control(OS_INFO, item)
+                self.controlMap[newId] = Control(Operation.INFO, item)
 
         self.SetSizerAndFit(sizer)
         self.SetupScrolling()
@@ -286,11 +287,11 @@ class ValueProperty(object):
             attr = state
 
     def update(self, type_, state):
-        if type_ == OS_GET:
+        if type_ == Operation.GET:
             self.updateAttr('get', state)
-        elif type_ == OS_SET:
+        elif type_ == Operation.SET:
             self.updateAttr('set_', state)
-        elif type_ == OS_INFO:
+        elif type_ == Operation.INFO:
             self.updateAttr('info', state)
 
 
@@ -363,4 +364,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

@@ -29,7 +29,6 @@
 import abc
 import logging
 import threading
-from pubsub import pub as Publisher
 from genilib.configuration import Config
 from wx import CallAfter
 
@@ -45,7 +44,6 @@ class IController(object):
     quitModelEvent = threading.Event()
 
     def __init__(self, modelCls, viewClass):
-        self._pub = Publisher
         self._view = viewClass  # (self, model)
         self._waitingPoint = threading.Event()
         connection = connectionFactory(config.get('network', 'driver'))

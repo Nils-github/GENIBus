@@ -79,7 +79,7 @@ class ConfigProcessor(object):
     def write(self, fp):
         for section, items in self._sections.items():
             fp.write("[%s]\n" % section)
-            for key, value in items.items():
+            for key, value in list(items.items()):
                 fp.write("%s = %s\n" % (key, value))
             fp.write("\n")
 
@@ -89,7 +89,7 @@ class ConfigProcessor(object):
 
     def items(self, section):
         items = self._sections.get(section)
-        return items.items() if items else []
+        return list(items.items()) if items else []
 
     def options(self, section):
         items = self._sections.get(section)

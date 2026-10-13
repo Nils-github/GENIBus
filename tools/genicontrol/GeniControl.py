@@ -30,6 +30,7 @@ import array
 import logging
 import os
 import queue
+import sys
 import wx
 from pubsub import pub as Publisher
 from wx import CallAfter
@@ -50,6 +51,7 @@ from genilib.gui.menu import Menu, MenuItem, MenuSeparator, createMenuBar
 from genilib.utils import dumpHex
 
 TR = wx.GetTranslation
+pumptype = 0
 
 class BusmonitorPanel(wx.Panel):
     def __init__(self, parent):
@@ -102,8 +104,17 @@ class TestNB(wx.Notebook):
 class GBFrame(wx.Frame):
     def __init__(self, parent, menuData, size = None, pos = None):
         wx.Frame.__init__(self, parent, -1, "GeniControl", size = size, pos = pos)
+        self.paddrress = 231 ## = factory default Unit Address
         self.initStatusBar()
         createMenuBar(self, menuData)
+        self.pumpAddressItems = {}
+        for menu in menuData:
+            if isinstance(menu, Menu) and menu.name == "&Pumpaddress":
+                for item in menu.items:
+                    if hasattr(item, 'value'):
+                        self.pumpAddressItems[item.id] = item.value
+                break
+        self.updatePumpAddressMenu()
         self.locale = None
         #self.updateLanguage(wx.LANGUAGE_ITALIAN)
 
@@ -121,14 +132,25 @@ class GBFrame(wx.Frame):
         #wx.Log.SetTraceMask(wx.TraceMessages
 
         self.notebook = TestNB(self, wx.NewIdRef())
+        frameSizer = wx.BoxSizer(wx.VERTICAL)
+        frameSizer.Add(self.notebook, 1, wx.EXPAND)
+        self.SetSizer(frameSizer)
+        self.notebook.SetSelection(0)
+        self.Layout()
         if not pos:
             self.Center()
 
+        self.pumptype = pumptype
+        self.model = PumpTypeModel()
+        self.model.initialize()
+        self.model.load()
+    
     def initialize(self, model, quitEvent):
         self._model = model
         self.notebook.mcPanel.setLEDState(0, True)
         self._quitEvent = quitEvent
         self._messageQueue = queue.Queue()
+        self.setInitialValues()
 
     def quit(self):
         pass
@@ -147,6 +169,32 @@ class GBFrame(wx.Frame):
         else:
             self.locale = None
 
+    def setInitialValues(self):
+        self.pumptype = self.model.getPumpType()
+        self.ptype = "none"
+        if self.pumptype == 1:
+            self.ptype = "upe"
+        elif self.pumptype == 2:
+            self.ptype = "magna"
+        self.updatePumpTypeMenu()
+        print("setInitialValues")
+        print(self.ptype)
+        print(self.pumptype)
+
+    def updatePumpTypeMenu(self):
+        self.GetMenuBar().SetMenuLabel(2, "&Pumptype : %s" % self.ptype)
+
+    def updatePumpAddressMenu(self):
+        if self.GetMenuBar() is not None:
+            self.GetMenuBar().SetMenuLabel(3, "&Pumpaddress : %s" % self.paddrress)
+
+    def onPumpAddress(self, event):
+        value = self.pumpAddressItems.get(event.GetId())
+        if value is None:
+            return
+        self.paddrress = value
+        self.updatePumpAddressMenu()
+
     def initStatusBar(self):
         self.statusbar = self.CreateStatusBar()
         self.statusbar.SetFieldsCount(3)
@@ -163,6 +211,16 @@ class GBFrame(wx.Frame):
 
     def onCloseWindow(self, event):
         Publisher.sendMessage('QUIT')
+
+    def onUpe(self, event):
+        self.model.setPumpType(1)
+        self.ptype = "upe"
+        self.updatePumpTypeMenu()
+
+    def onMagna(self, event):
+        self.model.setPumpType(2)
+        self.ptype = "magna"
+        self.updatePumpTypeMenu()
 
     def shutdownView(self):
         self.quit()
@@ -186,6 +244,15 @@ class GeniControlApp(wx.App):
     def __init__(self):
         super(GeniControlApp, self).__init__()
 
+def buildPumpAddressMenu():
+    items = []
+    for addr in range(32, 232):
+        item = MenuItem(str(addr), "Set pump address to %s" % addr, "onPumpAddress")
+        item.value = addr
+        items.append(item)
+    return Menu("&Pumpaddress", *items)
+
+
 MAIN_MENU = (
     Menu("&File",
          MenuItem("&Save", "Save settings.", "onSaveSettings"),
@@ -195,8 +262,39 @@ MAIN_MENU = (
          MenuSeparator(),
          MenuItem("&Exit", "Exit GeniControl", "onCloseWindow")),
 
-    Menu("&Extras", MenuItem("&Options", "", "onOptions"))
-)
+    Menu("&Extras", MenuItem("&Options", "", "onOptions")),
+    Menu("&Pumptype",
+         MenuItem("&UPE", "Grundfos UPE", "onUpe"),
+         MenuItem("&MAGNA", "Grundfos MAGNA", "onMagna")),
+    buildPumpAddressMenu())
+
+class PumpTypeModel(object):
+    pumptype2 = 0
+
+    def __init__(self):
+        self.config = Config("GeniControl")
+        print("init")
+
+    def initialize(self):
+        pass
+
+    def load(self):
+        self.config.load()
+        PumpTypeModel.pumptype2 = self.config.get('general', 'pumptype')
+        print("load")
+        print(PumpTypeModel.pumptype2)
+
+    def save(self):
+        pass
+
+    def getPumpType(self):
+        print(PumpTypeModel.pumptype2)
+        return PumpTypeModel.pumptype2
+
+    def setPumpType(self, value):
+        self.config.set('general', 'pumptype', value)
+        PumpTypeModel.pumptype2 = value
+        print(value)
 
 def main():
     logger = logging.getLogger("GeniControl")

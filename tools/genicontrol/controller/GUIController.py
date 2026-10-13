@@ -168,7 +168,7 @@ class GUIController(IController):
         self._controllerThread.start()
         self.signal()
 
-    def onQuit(self, msg):
+    def onQuit(self, msg=None):
         self.quitApplication()
 
     def onCloseApplication(self, event):

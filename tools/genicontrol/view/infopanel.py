@@ -40,8 +40,8 @@ class InfoPanel(ScrolledPanel):
         ScrolledPanel.__init__(self, parent = parent, id = wx.ID_ANY)
         sizer = self.addValues(DataitemConfiguration['StringValues'])
         self.grid = GridControl(self, DataitemConfiguration['InfoValues'], dataitems.DATAITEMS)
-        sizer.Add(self.grid, 1, wx.ALL, 5)
-        self.SetSizerAndFit(sizer)
+        sizer.Add(self.grid, 1, wx.ALL | wx.EXPAND, 5)
+        self.SetSizer(sizer)
         ctl = self.FindWindowById(controlids.ID_STR_PRODUCT_NAME)
         ctl.SetValue('GeniBus Simulation')
         ctl = self.FindWindowById(controlids.ID_STR_SOFTWARE_NAME1)
@@ -54,7 +54,7 @@ class InfoPanel(ScrolledPanel):
         ctl.SetValue('CS')
         ctl = self.FindWindowById(controlids.ID_STR_SERIAL_NO)
         ctl.SetValue('RT')
-        self.SetupScrolling()
+        self.SetupScrolling(scroll_x=False, scroll_y=True)
 
     def addValues(self, values):
         sizer = wx.BoxSizer(wx.VERTICAL)

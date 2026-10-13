@@ -26,10 +26,7 @@
 ##
 ##
 
-try:
-    import ConfigParser as configparser
-except ImportError:
-    import configparser # Python 3.x
+import configparser
 
 from genilib.utils import loadYaml
 

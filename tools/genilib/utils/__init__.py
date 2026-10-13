@@ -69,13 +69,7 @@ def dumpHex(arr):
     return [hex(x) for x in arr]
 
 
-if sys.version_info.major == 3:
-    from io import BytesIO as StringIO
-else:
-    try:
-        from cStringIO import StringIO
-    except ImportError:
-        from StringIO import StringIO
+from io import BytesIO as StringIO
 
 
 def createStringBuffer(*args):

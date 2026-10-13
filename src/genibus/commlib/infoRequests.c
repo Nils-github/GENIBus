@@ -41,7 +41,7 @@ unsigned char InfoRequest1[] = {
     0x94,  /* Unit family code */
     0x98,  /* Accumulated electric energy consumption */
     0x46,  /* Survive Alarm No. 1 */
-    0x1c,  /* Temperature in contdefs.ACC_ROl electdefs.ACC_ROnics */
+    0x1c,  /* Temperature in control electronics */
     0x95,  /* Unit type code */
     0x99,  /* Accumulated electric energy consumption */
     0x3d,  /* Local reference attenuator input */

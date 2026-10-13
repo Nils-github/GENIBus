@@ -112,7 +112,7 @@ class RequestorThread(threading.Thread):
             self._model._concurrentAccess.acquire()
 
             if self.getState() == RequestorThread.STATE_IDLE:
-                self.logger.info('Trying to connect to %s.' % self._model._connection.displayName)
+                self.logger.info('Trying to connect to %s.' % self._model._connection.DRIVER)
                 self._currentRetry += 1
                 self._model.connect(toDriver = True)
                 if self._model.connected:
@@ -157,13 +157,18 @@ class RequestorThread(threading.Thread):
                     measurements = self._requestedDatapoints
                 )
                 self.request(req)
-                self._requestedDatapoints = ('power_16', 't_w_16', 'diff_press_16', 'flow_16'
+                class_16bit = defs.APDUClass.SIXTEENBIT_MEASURED_DATA
+                available = dataitems.DATAITEMS_FOR_CLASS[class_16bit]
+                self._requestedDatapoints = tuple(
+                    name for name in ('power_16', 't_w_16', 'diff_press_16', 'flow_16')
+                    if name in available
                 )
-                req = apdu.createGetValuesPDU(defs.APDUClass.SIXTEENBIT_MEASURED_DATA, 
-                    apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
-                    measurements = self._requestedDatapoints
-                )
-                self.request(req)
+                if self._requestedDatapoints:
+                    req = apdu.createGetValuesPDU(class_16bit,
+                        apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
+                        measurements=self._requestedDatapoints
+                    )
+                    self.request(req)
             else:
                 pass
             res = self._model._quitEvent.wait(self._cycleTime)
@@ -233,6 +238,8 @@ class RequestorThread(threading.Thread):
 
     def processConnectResp(self, response):
         unitAddress = response.sa
+        if unitAddress is not None:
+            self.setValue(defs.APDUClass.CONFIGURATION_PARAMETERS, 'unit_addr', unitAddress)
         for apdu in response.APDUs:
             if apdu.klass == defs.APDUClass.PROTOCOL_DATA:
                 df_buf_len, unit_bus_mode = apdu.data
@@ -322,12 +329,16 @@ def interpreteInfoResponse(response, datapoints):
         idx = 0
         values = []
         for datapoint in datapoints:
+            if idx >= len(apdu.data):
+                break
             data = apdu.data[idx]
             sif = data & 0b11
             if sif in (0, 1):
                 result[klass][datapoint] = defs.Info(data, None, None, None)
                 idx += 1    # No scaling information.
             else:
+                if idx + 3 >= len(apdu.data):
+                    break
                 result[klass][datapoint] = defs.Info(data, apdu.data[idx + 1], apdu.data[idx + 2], apdu.data[idx + 3])
                 idx += 4
     return result
@@ -340,9 +351,13 @@ def interpreteGetValueResponse(response, datapoints):
         result.setdefault(klass, {})
         values = []
         for idx, datapoint in enumerate(datapoints):
-            if klass ==  defs.APDUClass.SIXTEENBIT_MEASURED_DATA: # Catch low and high Byte
-                result[klass][datapoint] = makeWord(apdu.data[2*idx], apdu.data[2*idx+1])
+            if klass == defs.APDUClass.SIXTEENBIT_MEASURED_DATA:
+                if 2 * idx + 1 >= len(apdu.data):
+                    break
+                result[klass][datapoint] = makeWord(apdu.data[2 * idx], apdu.data[2 * idx + 1])
             else:
+                if idx >= len(apdu.data):
+                    break
                 result[klass][datapoint] = apdu.data[idx]
     return result
 

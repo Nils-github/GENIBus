@@ -43,6 +43,7 @@ class InfoPanel(ScrolledPanel):
         sizer.Add(self.grid, 1, wx.ALL | wx.EXPAND, 5)
         self.SetSizer(sizer)
         ctl = self.FindWindowById(controlids.ID_STR_PRODUCT_NAME)
+        ctl.SetMinSize((140, -1))
         ctl.SetValue('GeniBus Simulation')
         ctl = self.FindWindowById(controlids.ID_STR_SOFTWARE_NAME1)
         ctl.SetValue('GeniControl')

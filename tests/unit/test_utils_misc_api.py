@@ -47,3 +47,18 @@ def test_logger_api_aliases() -> None:
     logger.setLevel("ERROR")
     assert logger.logger.level == logging.ERROR
 
+
+def test_request_parser_handles_truncated_payloads() -> None:
+    from genicontrol.request import interpreteGetValueResponse, interpreteInfoResponse
+
+    class DummyApdu:
+        def __init__(self, klass, data):
+            self.klass = klass
+            self.data = data
+
+    response = type("Response", (), {"APDUs": [DummyApdu(2, [0x10])]} )()
+    assert interpreteGetValueResponse(response, ["a", "b"]) == {2: {"a": 0x10}}
+
+    info_response = type("InfoResponse", (), {"APDUs": [DummyApdu(2, [0x01, 0x02])]})()
+    assert interpreteInfoResponse(info_response, ["a", "b"]) == {2: {"a": (0x01, None, None, None)}}
+

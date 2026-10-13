@@ -1,5 +1,8 @@
 import genibus.apdu as apdu
 import genibus.gbdefs as defs
+import genicontrol.apdu as gui_apdu
+import genicontrol.dataitems as gui_dataitems
+import genicontrol.defs as gui_defs
 
 
 def to_hex(data):
@@ -89,4 +92,19 @@ def test_create_get_values_pdu_accepts_snake_case_keyword_protocol_data() -> Non
     )
 
     assert to_hex(modern) == to_hex(apdu.createConnectRequestPDU(0x01))
+
+
+def test_gui_16bit_measurement_datapoints_build_from_magna_model() -> None:
+    gui_dataitems.load_model("magna")
+    datapoints = ("power_16", "t_w_16", "diff_press_16", "flow_16")
+    header = gui_apdu.Header(gui_defs.SD_DATA_REQUEST, 0x20, 0x01)
+
+    pdu = gui_apdu.createGetValuesPDU(
+        gui_defs.APDUClass.SIXTEENBIT_MEASURED_DATA,
+        header,
+        measurements=datapoints,
+    )
+
+    assert pdu[4] == gui_defs.APDUClass.SIXTEENBIT_MEASURED_DATA
+    assert list(pdu[6:10]) == [50, 51, 52, 53]
 

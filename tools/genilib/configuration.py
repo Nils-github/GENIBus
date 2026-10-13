@@ -27,8 +27,7 @@
 ##
 
 import configparser
-
-from genilib.utils import loadYaml
+import json
 
 import logging
 import os
@@ -40,7 +39,12 @@ from genilib.utils.configprocessor import ConfigProcessor
 
 
 def readConfigFile(project, fname):
-    return pkgutil.get_data(project, 'config/%s' % fname)
+    payload = pkgutil.get_data(project, 'config/%s' % fname)
+    if payload is None:
+        raise FileNotFoundError('Missing config file: %s' % fname)
+    if isinstance(payload, bytes):
+        payload = payload.decode('utf-8')
+    return json.loads(payload)
 
 class Config(object):
     _lock = threading.Lock()
@@ -54,10 +58,10 @@ class Config(object):
                 if not hasattr(cls, '_instance'):
                     cls.configurationFile = absConfigurationFilename("%s.cfg" % applicationName)
                     print("Configuration file is '{0}'.".format(cls.configurationFile))
-                    cls.defaultsFile = "%s_Defaults.yaml" % applicationName
+                    cls.defaultsFile = "%s_Defaults.json" % applicationName
                     print("Defaults file is '{0}'.".format(cls.defaultsFile))
                     cls._instance = super(cls.__class__, cls).__new__(cls)
-                    baz = loadYaml(readConfigFile("genicontrol", cls.defaultsFile))
+                    baz = readConfigFile("genicontrol", cls.defaultsFile)
                     cls.cp = ConfigProcessor(baz)
             finally:
                 cls._lock.release()
@@ -72,8 +76,8 @@ class Config(object):
                 self.cp.read(open(self.configurationFile))
                 self.loaded = True
             else:
-                # else: we are working with default values.
-                print("Configuration file doesn't exist, using defaults.")
+                # The defaults loaded during construction are already active.
+                self.loaded = True
 
     def save(self):
         self.cp.write(open(self.configurationFile, 'w'))

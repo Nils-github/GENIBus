@@ -69,6 +69,7 @@ commandSetValues = (
 
 DATA_POOL = { # This dictionary is used to 'simulate' communication.
     defs.APDUClass.PROTOCOL_DATA: {
+#        Item(u"df_buf_len",         0x46, None),
         Item(u"buf_len",            0x46, None),
         Item(u"unit_bus_mode",      0x4e, None)
     },
@@ -77,6 +78,7 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item(u"t_2hour_hi", 0x03,        Info(0x82, 0x27, 0x00, 0x7f)),
         Item(u"t_2hour_lo", 0x47,        Info(0xb0, None, None, None)),
         Item(u"f_act", 0x57,             Info(0x82, 0x26, 0x00, 0x6e)),
+        Item(u"speed", 0x09,             Info(0x83, 0x62, 0x00, 0x00)),
         Item(u"speed_hi", 0x09,          Info(0x83, 0x62, 0x00, 0x00)),
         Item(u"speed_lo", 0x70,          Info(0xb0, None, None, None)),
         Item(u"h", 0x25,                 Info(0x82, 0x19, 0x00, 0x14)),
@@ -119,6 +121,8 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item(u"alarm_log_5", 0x00,       Info(0xa0, None, None, None)),
         Item(u"unit_family", 0x07,       Info(0x80, None, None, None)),
         Item(u"unit_type", 0x01,         Info(0x80, None, None, None)),
+        Item(u"twin_pump_mode", 0x00,    Info(0xa0, None, None, None)),
+        Item(u"ref_norm", 0x00,          Info(0xa0, None, None, None)),
     },
 
     defs.APDUClass.SIXTEENBIT_MEASURED_DATA: {
@@ -150,6 +154,10 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item(u"RESET_HIST",      None,   Info(None, None, None, None)),
         Item(u"RESET_ALARM_LOG", None,   Info(None, None, None, None)),
         Item(u"AUTOADAPT",       None,   Info(None, None, None, None)),
+        Item(u"AUTOMATIC",       None,   Info(None, None, None, None)),
+        Item(u"TWIN_MODE_SPARE", None,   Info(None, None, None, None)),
+        Item(u"TWIN_MODE_ALT",   None,   Info(None, None, None, None)),
+        Item(u"TWIN_MODE_SYNC",  None,   Info(None, None, None, None)),
         Item(u"NIGHT_REDUCT_E+", None,   Info(None, None, None, None)),
         Item(u"NIGHT_REDUCT_D+", None,   Info(None, None, None, None)),
     },
@@ -199,6 +207,8 @@ def createResponse(request):
         else:
             for item in data:
                 name, acess, _ = dataItemsById[item]
+                if name not in dataItemsByName:
+                    continue
                 #print("KLASS: %s NAME: %s " % (klass, name))
                 value, info = dataItemsByName[name]
                 if ack == defs.OS_GET:
@@ -332,11 +342,14 @@ def rawInterpreteResponse(response, datapoints, valueInterpretation):
             dataItemsByName = dict([(a, (b, c)) for a, b ,c in DATA_POOL[apdu.klass]])
             for name, value in zip(datapoints, apdu.data):
                 _, (head, unit, zero, range) = dataItemsByName[name]
-                unitInfo = units.UnitTable[unit]
                 if head == 0x82:
+                    unitInfo = units.UnitTable[unit]
                     result.append(ValueType(name, unitInfo.unit, conversion.convertForward8(value, zero, range, unitInfo.factor)))
                 elif head == 0x83:
-                    result.append(ValueType(name, unitInfo.unit, conversion.Extended16(value, zero, range, unitInfo.factor)))
+                    unitInfo = units.UnitTable[unit]
+                    result.append(ValueType(name, unitInfo.unit, conversion.convertExtended16(value, zero, range, unitInfo.factor)))
+                else:
+                    result.append(ValueType(name, None, value))
         elif valueInterpretation == defs.OS_INFO:
             idx = 0
             values = []
@@ -356,10 +369,18 @@ def rawInterpreteResponse(response, datapoints, valueInterpretation):
 
 def main():
     createStaticTelegrams(0x20)
-    telegram = apdu.createGetValuesPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01), measurements = dataReqValues)
+    telegram = apdu.createGetValuesPDU(
+        defs.APDUClass.MEASURED_DATA,
+        apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01),
+        measurements=dataReqValues,
+    )
     testResponse(telegram, dataReqValues, defs.OS_GET)
 
-    telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01), measurements = infoReqValues)
+    telegram = apdu.createGetInfoPDU(
+        defs.APDUClass.MEASURED_DATA,
+        apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01),
+        measurements=infoReqValues,
+    )
     testResponse(telegram, infoReqValues, defs.OS_INFO)
 
     telegram = apdu.createSetCommandsPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01), commands = commandSetValues)

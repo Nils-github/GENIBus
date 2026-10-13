@@ -1,0 +1,387 @@
+{
+  "1": {
+    "physEntity": "Electrical current",
+    "factor": 0.1,
+    "unit": "A"
+  },
+  "2": {
+    "physEntity": "Electrical current",
+    "factor": 5,
+    "unit": "A"
+  },
+  "3": {
+    "physEntity": "Voltage",
+    "factor": 0.1,
+    "unit": "V"
+  },
+  "4": {
+    "physEntity": "Voltage",
+    "factor": 1,
+    "unit": "V"
+  },
+  "5": {
+    "physEntity": "Voltage",
+    "factor": 5,
+    "unit": "V"
+  },
+  "6": {
+    "physEntity": "Elec. resistance",
+    "factor": 1,
+    "unit": "Ω"
+  },
+  "7": {
+    "physEntity": "Power (active)",
+    "factor": 1,
+    "unit": "W"
+  },
+  "8": {
+    "physEntity": "Power (active)",
+    "factor": 10,
+    "unit": "W"
+  },
+  "9": {
+    "physEntity": "Power (active)",
+    "factor": 100,
+    "unit": "W"
+  },
+  "10": {
+    "physEntity": "Power (apparent)",
+    "factor": 1,
+    "unit": "VA"
+  },
+  "11": {
+    "physEntity": "Power (apparent)",
+    "factor": 10,
+    "unit": "VA"
+  },
+  "12": {
+    "physEntity": "Power (apparent)",
+    "factor": 100,
+    "unit": "VA"
+  },
+  "13": {
+    "physEntity": "Power (reactive)",
+    "factor": 1,
+    "unit": "VAr"
+  },
+  "14": {
+    "physEntity": "Power (reactive)",
+    "factor": 10,
+    "unit": "Var"
+  },
+  "15": {
+    "physEntity": "Power (reactive)",
+    "factor": 100,
+    "unit": "VAr"
+  },
+  "16": {
+    "physEntity": "Frequency",
+    "factor": 1,
+    "unit": "Hz"
+  },
+  "17": {
+    "physEntity": "Frequency",
+    "factor": 2.5,
+    "unit": "Hz"
+  },
+  "18": {
+    "physEntity": "Rot. velocity",
+    "factor": 12,
+    "unit": "rpm"
+  },
+  "19": {
+    "physEntity": "Rot. velocity",
+    "factor": 100,
+    "unit": "rpm"
+  },
+  "20": {
+    "physEntity": "Temperature",
+    "factor": 0.1,
+    "unit": "°C"
+  },
+  "21": {
+    "physEntity": "Temperature",
+    "factor": 1,
+    "unit": "°C"
+  },
+  "22": {
+    "physEntity": "Flow",
+    "factor": 0.1,
+    "unit": "m³/h"
+  },
+  "23": {
+    "physEntity": "Flow",
+    "factor": 1,
+    "unit": "m³/h"
+  },
+  "24": {
+    "physEntity": "Head",
+    "factor": 0.1,
+    "unit": "m"
+  },
+  "25": {
+    "physEntity": "Head",
+    "factor": 1,
+    "unit": "m"
+  },
+  "26": {
+    "physEntity": "Head",
+    "factor": 10,
+    "unit": "m"
+  },
+  "27": {
+    "physEntity": "Pressure",
+    "factor": 0.01,
+    "unit": "bar"
+  },
+  "28": {
+    "physEntity": "Pressure",
+    "factor": 0.1,
+    "unit": "bar"
+  },
+  "29": {
+    "physEntity": "Pressure",
+    "factor": 1,
+    "unit": "bar"
+  },
+  "30": {
+    "physEntity": "Percentage",
+    "factor": 1,
+    "unit": "%"
+  },
+  "31": {
+    "physEntity": "Energy",
+    "factor": 1,
+    "unit": "kWh"
+  },
+  "32": {
+    "physEntity": "Energy",
+    "factor": 10,
+    "unit": "kWh"
+  },
+  "33": {
+    "physEntity": "Energy",
+    "factor": 100,
+    "unit": "kWh"
+  },
+  "34": {
+    "physEntity": "Ang. velocity",
+    "factor": 2,
+    "unit": "rad/s"
+  },
+  "35": {
+    "physEntity": "Time",
+    "factor": 1,
+    "unit": "h"
+  },
+  "36": {
+    "physEntity": "Time",
+    "factor": 2,
+    "unit": "min"
+  },
+  "37": {
+    "physEntity": "Time",
+    "factor": 1,
+    "unit": "s"
+  },
+  "38": {
+    "physEntity": "Frequency",
+    "factor": 2,
+    "unit": "Hz"
+  },
+  "39": {
+    "physEntity": "Time",
+    "factor": 1024,
+    "unit": "h"
+  },
+  "40": {
+    "physEntity": "Energy",
+    "factor": 512,
+    "unit": "kWh"
+  },
+  "41": {
+    "physEntity": "Flow",
+    "factor": 5,
+    "unit": "m³/h"
+  },
+  "42": {
+    "physEntity": "Electrical current",
+    "factor": 0.2,
+    "unit": "A"
+  },
+  "43": {
+    "physEntity": "Elec. resistance",
+    "factor": 10,
+    "unit": "kΩ"
+  },
+  "44": {
+    "physEntity": "Power (active)",
+    "factor": 1,
+    "unit": "kW"
+  },
+  "45": {
+    "physEntity": "Power (active)",
+    "factor": 10,
+    "unit": "kW"
+  },
+  "46": {
+    "physEntity": "Energy",
+    "factor": 1,
+    "unit": "MWh"
+  },
+  "47": {
+    "physEntity": "Energy",
+    "factor": 10,
+    "unit": "MWh"
+  },
+  "48": {
+    "physEntity": "Energy",
+    "factor": 100,
+    "unit": "MWh"
+  },
+  "49": {
+    "physEntity": "Ang. degrees",
+    "factor": 1,
+    "unit": "°"
+  },
+  "50": {
+    "physEntity": "Gain",
+    "factor": 1,
+    "unit": ""
+  },
+  "51": {
+    "physEntity": "Pressure",
+    "factor": 0.001,
+    "unit": "bar"
+  },
+  "52": {
+    "physEntity": "Flow",
+    "factor": 1,
+    "unit": "l/s"
+  },
+  "53": {
+    "physEntity": "Flow",
+    "factor": 1,
+    "unit": "m³/s"
+  },
+  "54": {
+    "physEntity": "Flow",
+    "factor": 1,
+    "unit": "gpm"
+  },
+  "55": {
+    "physEntity": "Pressure",
+    "factor": 1,
+    "unit": "psi"
+  },
+  "56": {
+    "physEntity": "Head",
+    "factor": 1,
+    "unit": "ft"
+  },
+  "57": {
+    "physEntity": "Temperature",
+    "factor": 1,
+    "unit": "°F"
+  },
+  "58": {
+    "physEntity": "Flow",
+    "factor": 10,
+    "unit": "gpm"
+  },
+  "59": {
+    "physEntity": "Head",
+    "factor": 10,
+    "unit": "ft"
+  },
+  "60": {
+    "physEntity": "Pressure",
+    "factor": 10,
+    "unit": "psi"
+  },
+  "61": {
+    "physEntity": "Pressure",
+    "factor": 1,
+    "unit": "kPa"
+  },
+  "62": {
+    "physEntity": "Electrical current",
+    "factor": 0.5,
+    "unit": "A"
+  },
+  "63": {
+    "physEntity": "Flow",
+    "factor": 0.1,
+    "unit": "l/s"
+  },
+  "64": {
+    "physEntity": "Volume",
+    "factor": 0.1,
+    "unit": "m³"
+  },
+  "65": {
+    "physEntity": "Volume",
+    "factor": 1000,
+    "unit": "m³"
+  },
+  "66": {
+    "physEntity": "Energy pr vol.",
+    "factor": 10,
+    "unit": "kWh/m³"
+  },
+  "67": {
+    "physEntity": "Volume",
+    "factor": 256,
+    "unit": "m³"
+  },
+  "68": {
+    "physEntity": "Area",
+    "factor": 1,
+    "unit": "m²"
+  },
+  "69": {
+    "physEntity": "Flow",
+    "factor": 0.1,
+    "unit": "ml/h"
+  },
+  "70": {
+    "physEntity": "Volume",
+    "factor": 0.1,
+    "unit": "ml"
+  },
+  "71": {
+    "physEntity": "Volume",
+    "factor": 1,
+    "unit": "nl"
+  },
+  "72": {
+    "physEntity": "Time",
+    "factor": 1024,
+    "unit": "min"
+  },
+  "73": {
+    "physEntity": "Flow",
+    "factor": 0.5,
+    "unit": "l/h"
+  },
+  "74": {
+    "physEntity": "Energy pr vol.",
+    "factor": 1,
+    "unit": "Wh/m³"
+  },
+  "84": {
+    "physEntity": "Temperature",
+    "factor": 0.01,
+    "unit": "K"
+  },
+  "98": {
+    "physEntity": "Rot. velocity",
+    "factor": 1,
+    "unit": "rpm"
+  },
+  "104": {
+    "physEntity": "Voltage",
+    "factor": 2,
+    "unit": "V"
+  }
+}

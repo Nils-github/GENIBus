@@ -66,7 +66,9 @@ class StatusPanel(wx.Panel):
         for idx, item in enumerate(DataitemConfiguration['MeasurementValues'], 1):
             key, displayName, unit, controlIdValue, controlIdUnit = item
 
-            ditem = dataitems.MEASUREMENT_VALUES[key]
+            ditem = dataitems.MEASUREMENT_VALUES.get(key)
+            if ditem is None:
+                continue
 
             if key in ('f_act', 'unit_family', 'unit_type'):
                 continue
@@ -85,9 +87,11 @@ class StatusPanel(wx.Panel):
 
         for idx, item in enumerate(DataitemConfiguration['MeasurementValues16bit'], 1):
             key, displayName, unit, controlIdValue, controlIdUnit = item
-        
-            ditem = dataitems.SIXTEENBIT_MEASUREMENT_VALUES[key]
-        
+
+            ditem = dataitems.SIXTEENBIT_MEASUREMENT_VALUES.get(key)
+            if ditem is None:
+                continue
+
             ctrl = wx.StaticText(self, wx.ID_ANY, displayName, style = wx.ALIGN_RIGHT)
             ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, (idx, 3), wx.DefaultSpan, wx.ALL, 5)

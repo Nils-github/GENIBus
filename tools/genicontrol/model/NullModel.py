@@ -149,7 +149,9 @@ class NullModel(ModelIf.IModel):
                 value_hi = value
                 value_lo = measurements[key + '_lo']
                 value = makeWord(value_hi, value_lo)
-                if key == 'speed': # 0x83 Extended Precision 16bit
+                if info.zero is None or info.range is None:
+                    scaledValue = str(value)
+                elif key == 'speed': # 0x83 Extended Precision 16bit
                     scaledValue = "%.2f" % self.roundValue(conversion.convertExtended16(value, info.zero, info.range, scalingInfo.factor))
                 else:
                     scaledValue = "%.2f" % self.roundValue(conversion.convertForward16(value, info.zero, info.range, scalingInfo.factor))
@@ -173,7 +175,7 @@ class NullModel(ModelIf.IModel):
                 if value == 0xff:
                     scaledValue = 'n/a'
                 else:
-                    if (info.head & 0x02) == 2:
+                    if (info.head & 0x02) == 2 and info.zero is not None and info.range is not None:
                         scaledValue = "%.2f" % self.roundValue(conversion.convertForward8(value, info.zero, info.range, scalingInfo.factor))
                     else:
                         scaledValue = str(value) # Unscaled.

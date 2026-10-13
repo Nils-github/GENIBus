@@ -116,10 +116,11 @@ class RefPanel(ScrolledPanel):
         for idx, item in enumerate(DataitemConfiguration['ReferenceValues']):
             key, displayName, unit, controlIdValue, controlIdUnit = item
 
-            if key in ('ref_rem', 'ref_ir'):
-                ditem = dataitems.REFERENCES[key]
-            else:
-                ditem = dataitems.MEASUREMENT_VALUES[key]
+            ditem = dataitems.REFERENCES.get(key)
+            if ditem is None:
+                ditem = dataitems.MEASUREMENT_VALUES.get(key)
+            if ditem is None:
+                continue
 
             ctrl = wx.StaticText(self, wx.ID_ANY, displayName, style = wx.ALIGN_RIGHT)
             ctrl.SetToolTip(wx.ToolTip(ditem.note))

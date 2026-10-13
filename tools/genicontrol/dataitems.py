@@ -32,78 +32,130 @@ __all__ = [
 ]
 
 from collections import namedtuple
+import json
+from pathlib import Path
 
-from genilib.utils import loadYaml
 import genicontrol.defs as defs
-from genilib.configuration import readConfigFile
+
+_DEVICE_MODELS_DIR = Path(__file__).resolve().parents[2] / 'src' / 'genibus' / 'devices'
 
 Dataitem = namedtuple('Dataitem', 'name klass id access note')
 
-DATAITEMS = loadYaml(readConfigFile("genicontrol", "dataitemsMAGNA.yaml"))
-
-def addToDict(d, k, v):
-    d[k] = v
-
-PROTOCOL_DATA = dict()
-COMMANDS = dict()
-MEASUREMENT_VALUES = dict()
-REFERENCES = dict()
-PARAMETER = dict()
-STRINGS = dict()
-SIXTEENBIT_MEASUREMENT_VALUES = dict()
+# Module-level lazy-loaded cache
+_loaded = False
+_current_model = None
 
 
-for item in DATAITEMS:
-    if item.klass == 0:
-        addToDict(PROTOCOL_DATA, item.name, item)
-    elif item.klass == 2:
-        addToDict(MEASUREMENT_VALUES, item.name, item)
-    elif item.klass == 3:
-        addToDict(COMMANDS, item.name, item)
-    elif item.klass == 4:
-        addToDict(PARAMETER, item.name, item)
-    elif item.klass == 5:
-        addToDict(REFERENCES, item.name, item)
-    elif item.klass == 7:
-        addToDict(STRINGS, item.name, item)
-    elif item.klass == 11:
-        addToDict(SIXTEENBIT_MEASUREMENT_VALUES, item.name, item)
-
-DATAITEMS_FOR_CLASS = {
-    defs.APDUClass.PROTOCOL_DATA:               PROTOCOL_DATA,
-    defs.APDUClass.MEASURED_DATA:               MEASUREMENT_VALUES,
-    defs.APDUClass.COMMANDS:                    COMMANDS,
-    defs.APDUClass.CONFIGURATION_PARAMETERS:    PARAMETER,
-    defs.APDUClass.REFERENCE_VALUES:            REFERENCES,
-    defs.APDUClass.ASCII_STRINGS:               STRINGS,
-    defs.APDUClass.SIXTEENBIT_MEASURED_DATA:    SIXTEENBIT_MEASUREMENT_VALUES
-}
-
-dataItemsById = lambda klass : dict([(v[2], (k, v[3], v[4])) for k, v in DATAITEMS_FOR_CLASS[klass].items()])
-dataItemsByName = lambda klass : dict([(k, (v[2], v[3], v[4])) for k, v in DATAITEMS_FOR_CLASS[klass].items()])
-
-DATAITEMS_BY_ID = {
-    defs.APDUClass.PROTOCOL_DATA:               dataItemsById(defs.APDUClass.PROTOCOL_DATA),
-    defs.APDUClass.MEASURED_DATA:               dataItemsById(defs.APDUClass.MEASURED_DATA),
-    defs.APDUClass.COMMANDS:                    dataItemsById(defs.APDUClass.COMMANDS),
-    defs.APDUClass.CONFIGURATION_PARAMETERS:    dataItemsById(defs.APDUClass.CONFIGURATION_PARAMETERS),
-    defs.APDUClass.REFERENCE_VALUES:            dataItemsById(defs.APDUClass.REFERENCE_VALUES),
-    defs.APDUClass.ASCII_STRINGS:               dataItemsById(defs.APDUClass.ASCII_STRINGS),
-    defs.APDUClass.SIXTEENBIT_MEASURED_DATA:    dataItemsById(defs.APDUClass.SIXTEENBIT_MEASURED_DATA)
-}
-
-DATAITEMS_BY_NAME = {
-    defs.APDUClass.PROTOCOL_DATA:               dataItemsByName(defs.APDUClass.PROTOCOL_DATA),
-    defs.APDUClass.MEASURED_DATA:               dataItemsByName(defs.APDUClass.MEASURED_DATA),
-    defs.APDUClass.COMMANDS:                    dataItemsByName(defs.APDUClass.COMMANDS),
-    defs.APDUClass.CONFIGURATION_PARAMETERS:    dataItemsByName(defs.APDUClass.CONFIGURATION_PARAMETERS),
-    defs.APDUClass.REFERENCE_VALUES:            dataItemsByName(defs.APDUClass.REFERENCE_VALUES),
-    defs.APDUClass.ASCII_STRINGS:               dataItemsByName(defs.APDUClass.ASCII_STRINGS),
-    defs.APDUClass.SIXTEENBIT_MEASURED_DATA:    dataItemsByName(defs.APDUClass.SIXTEENBIT_MEASURED_DATA)
-}
+def _load_model_data(model_name: str):
+    """Load a model definition from the canonical JSON device files."""
+    model_file = _DEVICE_MODELS_DIR / f'{model_name}.json'
+    with model_file.open('r', encoding='utf-8') as handle:
+        raw_data = json.load(handle)
+    return [
+        Dataitem(item[0], item[1], item[2], item[3], item[4])
+        for item in raw_data
+    ]
 
 
-#yaml.dump(DATAITEMS, open(r'C:\Users\christoph303\Documents\Arduino\libraries\Genibus\tools\genicontrol\config\dataitems.yaml', 'w'))
+def load_model(model_name: str = 'magna'):
+    """Reload the module data for a specific device model."""
+    global _loaded, _current_model
+    dataitems_data = _load_model_data(model_name)
+    _current_model = model_name
+    _loaded = False
+    _initialize()
+    return dataitems_data
+
+
+def _initialize():
+    """Initialize all data structures from the canonical JSON device model."""
+    global _loaded, _current_model
+
+    if _loaded and _current_model is not None:
+        return
+
+    raw_data = _load_model_data(_current_model or 'magna')
+
+    # Convert raw dicts to Dataitem namedtuples
+    dataitems_data = raw_data
+    
+    # Initialize dictionaries by class
+    protocol_data = {}
+    commands = {}
+    measurement_values = {}
+    references = {}
+    parameter = {}
+    strings = {}
+    sixteenbit_measurement_values = {}
+
+    def addToDict(d, k, v):
+        d[k] = v
+
+    for item in dataitems_data:
+        if item.klass == 0:
+            addToDict(protocol_data, item.name, item)
+        elif item.klass == 2:
+            addToDict(measurement_values, item.name, item)
+        elif item.klass == 3:
+            addToDict(commands, item.name, item)
+        elif item.klass == 4:
+            addToDict(parameter, item.name, item)
+        elif item.klass == 5:
+            addToDict(references, item.name, item)
+        elif item.klass == 7:
+            addToDict(strings, item.name, item)
+        elif item.klass == 11:
+            addToDict(sixteenbit_measurement_values, item.name, item)
+
+    dataitems_for_class = {
+        defs.APDUClass.PROTOCOL_DATA:               protocol_data,
+        defs.APDUClass.MEASURED_DATA:               measurement_values,
+        defs.APDUClass.COMMANDS:                    commands,
+        defs.APDUClass.CONFIGURATION_PARAMETERS:    parameter,
+        defs.APDUClass.REFERENCE_VALUES:            references,
+        defs.APDUClass.ASCII_STRINGS:               strings,
+        defs.APDUClass.SIXTEENBIT_MEASURED_DATA:    sixteenbit_measurement_values
+    }
+
+    def dataItemsById(klass):
+        d = dataitems_for_class[klass]
+        return {v.id: (v.name, v.access, v.note) for v in d.values()}
+    
+    def dataItemsByName(klass):
+        d = dataitems_for_class[klass]
+        return {k: (v.id, v.access, v.note) for k, v in d.items()}
+
+    dataitems_by_id = {k: dataItemsById(k) for k in dataitems_for_class.keys()}
+    dataitems_by_name = {k: dataItemsByName(k) for k in dataitems_for_class.keys()}
+    
+    # Update module globals
+    globals()['DATAITEMS'] = dataitems_data
+    globals()['PROTOCOL_DATA'] = protocol_data
+    globals()['COMMANDS'] = commands
+    globals()['MEASUREMENT_VALUES'] = measurement_values
+    globals()['REFERENCES'] = references
+    globals()['PARAMETER'] = parameter
+    globals()['STRINGS'] = strings
+    globals()['SIXTEENBIT_MEASUREMENT_VALUES'] = sixteenbit_measurement_values
+    globals()['DATAITEMS_FOR_CLASS'] = dataitems_for_class
+    globals()['DATAITEMS_BY_ID'] = dataitems_by_id
+    globals()['DATAITEMS_BY_NAME'] = dataitems_by_name
+    
+    _loaded = True
+
+
+def __getattr__(name):
+    """Lazy load data on first access."""
+    if name in ('DATAITEMS', 'PROTOCOL_DATA', 'COMMANDS', 'MEASUREMENT_VALUES', 'REFERENCES',
+                'PARAMETER', 'STRINGS', 'SIXTEENBIT_MEASUREMENT_VALUES', 'DATAITEMS_FOR_CLASS',
+                'DATAITEMS_BY_ID', 'DATAITEMS_BY_NAME'):
+        _initialize()
+        # Now that it's initialized, return the value from globals
+        return globals()[name]
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
+
+
+# json.dump(DATAITEMS, open(r'C:\Users\christoph303\Documents\Arduino\libraries\Genibus\tools\genicontrol\config\dataitems.json', 'w'))
 
 """
 Code Alarm Group Alarm Cause

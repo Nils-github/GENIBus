@@ -79,7 +79,9 @@ class GridControl(gridlib.Grid, mixins.GridAutoEditMixin):
 
 
     def setItem(self, item, physEntity, factor, unit, zero, _range):
-        row = self.getRowForDataitem(item)
+        row = self.dataitemToRowMapping.get(item)
+        if row is None:
+            return
 
         self.SetCellValue(row, 1, physEntity)
         self.SetCellValue(row, 2, factor)

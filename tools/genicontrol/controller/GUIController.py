@@ -26,10 +26,10 @@
 ##
 ##
 
+import json
 import logging
 import threading
 import wx
-import yaml
 from genicontrol.model.config import DataitemConfiguration
 import genicontrol.defs as defs
 from genicontrol.scaling import getScalingInfo
@@ -90,8 +90,7 @@ class ControllerThread(threading.Thread):
         #unitVersion = self._model.getValue(defs.APDUClass.MEASURED_DATA, 'unit_version') ## TODO: Fixme!
         else:
             with open(dd.getDeviceFilePath(unitFamily, unitType, 1), 'w') as outf:
-                #outf.write(str(self.infoRecords))
-                yaml.dump(self.infoRecords, outf)
+                json.dump(self.infoRecords, outf, indent=2, ensure_ascii=False)
 
         print("Exiting %s." % name)
 

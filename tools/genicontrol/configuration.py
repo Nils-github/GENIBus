@@ -27,14 +27,12 @@
 ##
 
 import configparser
+import json
 
-from genilib.utils import createStringBuffer
 import logging
 import os
 import pkgutil
 import threading
-
-import yaml
 
 from genilib.utils import absConfigurationFilename
 from genilib.utils.configprocessor import ConfigProcessor
@@ -43,7 +41,12 @@ CFG_FILE_NAME = absConfigurationFilename('.GeniControl.cfg')
 
 
 def readConfigFile(project, fname):
-    return pkgutil.get_data(project, 'config/%s' % fname)
+    payload = pkgutil.get_data(project, 'config/%s' % fname)
+    if payload is None:
+        raise FileNotFoundError('Missing config file: %s' % fname)
+    if isinstance(payload, bytes):
+        payload = payload.decode('utf-8')
+    return json.loads(payload)
 
 
 class Config(object):
@@ -57,7 +60,7 @@ class Config(object):
                 cls._lock.acquire()
                 if not hasattr(cls, '_instance'):
                     cls._instance = super(cls.__class__, cls).__new__(cls)
-                    baz = yaml.load(createStringBuffer(readConfigFile("genicontrol", "default_config.yaml")))
+                    baz = readConfigFile("genicontrol", "GeniControl_Defaults.json")
                     cls.cp = ConfigProcessor(baz)
             finally:
                 cls._lock.release()

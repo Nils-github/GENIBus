@@ -31,12 +31,7 @@ import array
 import logging
 import os
 import sys
-
-import yaml
-
 from genicontrol.defs import CONFIGURATION_DIRECTORY
-
-_bytes_type = bytes  # preserve builtin; shadowed by bytes() below
 
 logger = logging.getLogger("GeniControl")
 
@@ -53,13 +48,9 @@ def bytes(w):
     return tuple((hiByte(w), loByte(w)))
 
 def makeBuffer(arr):
-    return array.array('B', arr).tobytes()
+    return buffer(array.array('B', arr))
 
 def makeArray(buf):
-    if isinstance(buf, (_bytes_type, bytearray)):
-        return tuple(buf)
-    if isinstance(buf, memoryview):
-        return tuple(buf)
     return tuple([ord(x) for x in str(buf)])
 
 def absConfigurationFilename(fname):
@@ -76,28 +67,6 @@ def createStringBuffer(*args):
     """Create a string with file-like behaviour (StringIO on Python 2.x).
     """
     return StringIO(*args)
-
-def loadYaml(data):
-    """Load YAML that may contain Python-specific tags (!!python/tuple, etc.)."""
-    if isinstance(data, _bytes_type):
-        stream = data
-    else:
-        stream = createStringBuffer(data)
-
-    # PyYAML tries to apply 'state' to namedtuples loaded from legacy dumps;
-    # in Python 3 those fields are read-only and setattr fails.
-    original_set_state = yaml.constructor.UnsafeConstructor.set_python_instance_state
-
-    def set_python_instance_state(self, instance, state, unsafe=False):
-        if isinstance(instance, tuple) and getattr(instance, '_fields', None):
-            return
-        return original_set_state(self, instance, state, unsafe=unsafe)
-
-    yaml.constructor.UnsafeConstructor.set_python_instance_state = set_python_instance_state
-    try:
-        return yaml.load(stream, Loader=yaml.UnsafeLoader)
-    finally:
-        yaml.constructor.UnsafeConstructor.set_python_instance_state = original_set_state
 
 def binExtractor(fname, offset, length):
     """Extract a junk of data from a file.

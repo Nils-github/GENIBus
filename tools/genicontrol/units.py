@@ -28,13 +28,19 @@
 
 
 from collections import namedtuple
-from genilib.utils import loadYaml
+import json
 
 from genilib.configuration import readConfigFile
 
 ValueTuple = namedtuple('ValueTuple', 'header unit range zero value')
 Unit = namedtuple('Unit', 'physEntity factor unit')
 
-UnitTable = loadYaml(readConfigFile("genicontrol", "units.yaml"))
+_raw_units = readConfigFile("genicontrol", "units.json")
+
+# Convert dicts to Unit namedtuples. JSON object keys are strings, so coerce them to int.
+UnitTable = {}
+for key, unit_data in _raw_units.items():
+    unit_id = int(key)
+    UnitTable[unit_id] = Unit(unit_data['physEntity'], unit_data['factor'], unit_data['unit'])
 
 

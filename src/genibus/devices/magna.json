@@ -161,6 +161,13 @@
       "Water temperature"
    ], 
    [
+      "sys_fb", 
+      2, 
+      60, 
+      1, 
+      "System feedback to closed loop control"
+   ], 
+   [
       "ref_att_loc", 
       2, 
       61, 
@@ -208,6 +215,20 @@
       72, 
       1, 
       "Indication Alarm"
+   ], 
+   [
+      "r_min", 
+      2, 
+      76, 
+      1, 
+      "Reference subinterval minimum"
+   ], 
+   [
+      "r_max", 
+      2, 
+      77, 
+      1, 
+      "Reference subinterval maximum"
    ], 
    [
       "act_mode1", 
@@ -600,5 +621,33 @@
       9, 
       1, 
       ""
+   ],
+   [
+      "power_16",
+      11,
+      50,
+      1,
+      "Power consumption 16bit"
+   ],
+   [
+      "t_w_16",
+      11,
+      51,
+      1,
+      "Medium temperature 16bit"
+   ],
+   [
+      "diff_press_16",
+      11,
+      52,
+      1,
+      "Differential pressure 16bit"
+   ],
+   [
+      "flow_16",
+      11,
+      53,
+      1,
+      "Actual pump flow 16bit"
    ]
 ]

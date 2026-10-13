@@ -3,7 +3,8 @@ import pytest
 import genibus.gbdefs as defs
 from genibus.linklayer import parser
 from genibus.utils import crc
-from tools.pump_sim.simulator import PumpSimulator, PumpState
+from genicontrol.simu.Simulator import SimulationServer
+from genicontrol.model.state import PumpState
 
 
 def _build_request(
@@ -27,7 +28,7 @@ def _build_request(
 
 
 def _class_item_ids(klass: defs.APDUClass) -> dict[str, int]:
-    from tools.pump_sim import simulator as sim
+    from genicontrol.simu.Simulator import SimulationServer as sim
 
     mapping = sim.DATA_BY_CLASS[klass]
     return {name: item_id for item_id, (name, _acc, _note) in mapping.items()}
@@ -35,7 +36,7 @@ def _class_item_ids(klass: defs.APDUClass) -> dict[str, int]:
 
 def test_process_frame_get_and_connect_address_mapping() -> None:
     state = PumpState()
-    sim = PumpSimulator(state=state)
+    sim = SimulationServer(state=state)
     measured_ids = _class_item_ids(defs.APDUClass.MEASURED_DATA)
     req = _build_request(
         defs.CONNECTION_REQ_ADDR,
@@ -59,7 +60,7 @@ def test_process_frame_get_and_connect_address_mapping() -> None:
 
 def test_process_frame_set_ack_and_updates_value() -> None:
     state = PumpState()
-    sim = PumpSimulator(state=state)
+    sim = SimulationServer(state=state)
     ref_ids = _class_item_ids(defs.APDUClass.REFERENCE_VALUES)
     measured_ids = _class_item_ids(defs.APDUClass.MEASURED_DATA)
 
@@ -93,7 +94,7 @@ def test_process_frame_set_ack_and_updates_value() -> None:
 
 
 def test_process_frame_info_has_expected_payload_shape() -> None:
-    sim = PumpSimulator(state=PumpState())
+    sim = SimulationServer(state=PumpState())
     measured_ids = _class_item_ids(defs.APDUClass.MEASURED_DATA)
     req = _build_request(
         0x20,
@@ -113,7 +114,7 @@ def test_process_frame_info_has_expected_payload_shape() -> None:
 
 
 def test_process_frame_rejects_invalid_operation_code() -> None:
-    sim = PumpSimulator(state=PumpState())
+    sim = SimulationServer(state=PumpState())
     measured_ids = _class_item_ids(defs.APDUClass.MEASURED_DATA)
 
     frame = [
@@ -133,7 +134,7 @@ def test_process_frame_rejects_invalid_operation_code() -> None:
 
 
 def test_process_frame_rejects_odd_set_payload() -> None:
-    sim = PumpSimulator(state=PumpState())
+    sim = SimulationServer(state=PumpState())
     ref_ids = _class_item_ids(defs.APDUClass.REFERENCE_VALUES)
     req = _build_request(
         0x20,
@@ -148,7 +149,7 @@ def test_process_frame_rejects_odd_set_payload() -> None:
 
 
 def test_process_frame_rejects_bad_crc() -> None:
-    sim = PumpSimulator(state=PumpState())
+    sim = SimulationServer(state=PumpState())
     measured_ids = _class_item_ids(defs.APDUClass.MEASURED_DATA)
     req = _build_request(
         0x20,
@@ -182,7 +183,7 @@ class _FakeSession:
 
 
 def test_serve_session_processes_until_eof_and_closes() -> None:
-    sim = PumpSimulator(state=PumpState())
+    sim = SimulationServer(state=PumpState())
     measured_ids = _class_item_ids(defs.APDUClass.MEASURED_DATA)
     req = _build_request(
         0x20,

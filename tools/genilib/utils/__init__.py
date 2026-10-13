@@ -53,9 +53,6 @@ def loByte(w):
 def bytes(w):
     return tuple((hiByte(w), loByte(w)))
 
-def makeBuffer(arr):
-    return buffer(array.array('B', arr))
-
 def makeArray(buf):
     return tuple([ord(x) for x in str(buf)])
 

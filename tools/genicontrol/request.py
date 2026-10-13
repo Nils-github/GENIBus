@@ -33,12 +33,8 @@
 import logging
 import threading
 import time
-import sys
 
-if sys.version_info.major > 2:
-    import queue
-else:
-    import Queue as queue
+import queue
 
 import genicontrol.apdu as apdu
 import genicontrol.defs as defs

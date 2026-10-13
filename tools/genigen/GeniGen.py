@@ -169,7 +169,7 @@ class ClassPanel(ScrolledPanel):
         return sizer
 
     def addCheckBox(self, sizer, row, column):
-        cbId = wx.NewId()
+        cbId = wx.NewIdRef()
         cb = wx.CheckBox(parent = self, id = cbId)
         sizer.Add(cb, (row, column), wx.DefaultSpan, wx.ALL, 5)
         cb.Bind(wx.EVT_CHECKBOX, self.onChecked)
@@ -208,7 +208,7 @@ class GeniGenFrame(wx.Frame):
         createMenuBar(self, MY_MENU)
         self.locale = None
         self.model = GeniGenModel() # Just Model-View for now...
-        self.notebook = ItemsNotebook(self, wx.NewId())
+        self.notebook = ItemsNotebook(self, wx.NewIdRef())
         self.Bind(wx.EVT_CLOSE, self.onCloseWindow)
 
     def initStatusBar(self):

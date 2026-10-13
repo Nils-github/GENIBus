@@ -58,7 +58,7 @@ class BusmonitorPanel(wx.Panel):
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
         sizer = wx.BoxSizer()
         font = wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL)
-        self.tc = wx.TextCtrl(self, wx.NewId(), style = wx.TE_MULTILINE | wx.HSCROLL | wx.TE_RICH2 | wx.TE_NOHIDESEL | wx.TE_READONLY)
+        self.tc = wx.TextCtrl(self, wx.NewIdRef(), style = wx.TE_MULTILINE | wx.HSCROLL | wx.TE_RICH2 | wx.TE_NOHIDESEL | wx.TE_READONLY)
         self.tc.SetFont(font)
         sizer.Add(self.tc, 1, wx.EXPAND | wx.GROW)
         self.SetSizerAndFit(sizer)
@@ -120,7 +120,7 @@ class GBFrame(wx.Frame):
         wx.Log.SetActiveTarget(wx.LogStderr())
         #wx.Log.SetTraceMask(wx.TraceMessages
 
-        self.notebook = TestNB(self, wx.NewId())
+        self.notebook = TestNB(self, wx.NewIdRef())
         if not pos:
             self.Center()
 

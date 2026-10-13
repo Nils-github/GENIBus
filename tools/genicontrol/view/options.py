@@ -34,15 +34,15 @@ from genibus.linklayer.serialport import serial_available
 from genilib.gui.controls import createLabeledControl
 from genilib.configuration import Config
 
-ID_IPADDR       = wx.NewId()
-ID_SUBNET       = wx.NewId()
-ID_PORT         = wx.NewId()
-ID_POLL         = wx.NewId()
-ID_SERIAL_PORT  = wx.NewId()
+ID_IPADDR       = wx.NewIdRef()
+ID_SUBNET       = wx.NewIdRef()
+ID_PORT         = wx.NewIdRef()
+ID_POLL         = wx.NewIdRef()
+ID_SERIAL_PORT  = wx.NewIdRef()
 
-ID_RB_TCPIP     = wx.NewId()
-ID_RB_SERIAL    = wx.NewId()
-ID_RB_SIM       = wx.NewId()
+ID_RB_TCPIP     = wx.NewIdRef()
+ID_RB_SERIAL    = wx.NewIdRef()
+ID_RB_SIM       = wx.NewIdRef()
 
 def fixIP(addr):
     return '.'.join(["%3s" % j for j in [i.strip() for i in addr.split('.')]])
@@ -294,7 +294,7 @@ def testDialog():
 
 
 def main():
-    class TestApp(wx.PySimpleApp):
+    class TestApp(wx.App):
         def __init__(self):
             super(TestApp, self).__init__()
 

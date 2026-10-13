@@ -58,7 +58,7 @@ class MultipleChoiceButtons(wx.Panel):
         self.buttonDict = dict()
 
         for buttonName in buttons:
-            btn = wx.ToggleButton(self, label = buttonName, id =  wx.NewId())
+            btn = wx.ToggleButton(self, label = buttonName, id =  wx.NewIdRef())
             btn.Bind(wx.EVT_TOGGLEBUTTON, self.buttonClicked)
             sizer.Add(btn, 1, wx.ALL | wx.ALIGN_BOTTOM, 5)
             self.buttonDict[buttonName] = btn

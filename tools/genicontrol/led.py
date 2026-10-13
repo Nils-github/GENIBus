@@ -115,7 +115,7 @@ class LcdTest(wx.Frame):
         wx.FutureCall(500, self._time_passed)
 
 def main():
-    app = wx.PySimpleApp()
+    app = wx.App()
     f = LcdTest()
     app.MainLoop()
 

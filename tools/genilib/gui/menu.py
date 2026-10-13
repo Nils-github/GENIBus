@@ -84,7 +84,7 @@ def createItem(window, menu, item):
     if isinstance(item, MenuSeparator):
         menu.AppendSeparator()
     else:
-        newID = wx.NewId()
+        newID = wx.NewIdRef()
         menuItem = wx.MenuItem(menu, newID, item.name, item.helpString, item.kind)
         item.id = newID
         menu.Append(menuItem)
@@ -102,7 +102,7 @@ def appendItems(window, menu, menuData):
 
 def createSubMenu(window, menu, menuData):
     submenu = wx.Menu()
-    newID = wx.NewId()
+    newID = wx.NewIdRef()
     menu.AppendMenu(newID, menuData.name, submenu)
     menuData.id = newID
     appendItems(window, submenu, menuData)

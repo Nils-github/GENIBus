@@ -30,7 +30,7 @@ import array
 from collections import namedtuple
 import logging
 
-import genicontrol.apdu as apdu
+import genibus.apdu as apdu
 import genicontrol.conversion as conversion
 from genicontrol.connection import ConnectionIF
 from genicontrol.dissect import dissectResponse

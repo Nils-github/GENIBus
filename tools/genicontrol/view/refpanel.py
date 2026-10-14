@@ -31,7 +31,7 @@
 import wx
 import math
 import threading
-import genicontrol.apdu as apdu
+import genibus.apdu as apdu
 import genibus.gbdefs as defs
 #import genicontrol.model.ModelIf as ModelIf
 from wx.lib.scrolledpanel import ScrolledPanel

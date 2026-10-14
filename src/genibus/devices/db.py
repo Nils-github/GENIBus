@@ -32,6 +32,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import json
 import sqlite3
+import threading
 from collections import namedtuple
 from collections.abc import Sequence
 from importlib import resources
@@ -49,35 +50,38 @@ class DeviceDB(SingletonBase):
 
     def __init__(self) -> None:
         """Initialisiert die In-Memory-DB und importiert Ressourcen."""
+        self._lock = threading.RLock()
         self.open()
         self.import_files()
 
     def create_schema(self) -> None:
         """Erzeugt die Tabellen `dataitems` und `units`."""
-        self.cursor.execute(
+        with self._lock:
+            self.cursor.execute(
+                """
+                CREATE TABLE dataitems(
+                    model CHAR(64) NOT NULL, name CHAR(64) NOT NULL,
+                    class INT NOT NULL, id INT NOT NULL, access INT NOT NULL,
+                    note CHAR(64) DEFAULT NULL,
+                    PRIMARY KEY(model, name)
+                );
             """
-            CREATE TABLE dataitems(
-                model CHAR(64) NOT NULL, name CHAR(64) NOT NULL,
-                class INT NOT NULL, id INT NOT NULL, access INT NOT NULL,
-                note CHAR(64) DEFAULT NULL,
-                PRIMARY KEY(model, name)
-            );
-        """
-        )
+            )
 
-        self.cursor.execute(
-            """CREATE TABLE units(
-            id INT NOT NULL PRIMARY KEY,physicalEntity CHAR(64), prefix DOUBLE, Unit CHAR(8)
-            );
-        """
-        )
-        self.conn.commit()
+            self.cursor.execute(
+                """CREATE TABLE units(
+                id INT NOT NULL PRIMARY KEY,physicalEntity CHAR(64), prefix DOUBLE, Unit CHAR(8)
+                );
+            """
+            )
+            self.conn.commit()
 
     def open(self) -> None:
         """Oeffnet die SQLite-In-Memory-Datenbank und erstellt das Schema."""
-        self.conn = sqlite3.connect(":memory:")
-        self.cursor = self.conn.cursor()
-        self.create_schema()
+        with self._lock:
+            self.conn = sqlite3.connect(":memory:", check_same_thread=False)
+            self.cursor = self.conn.cursor()
+            self.create_schema()
 
     def to_list(self, *args: Any) -> list[Any]:
         """Flacht gemischte Argumente zu einer flachen Liste ab.
@@ -98,39 +102,43 @@ class DeviceDB(SingletonBase):
 
     def import_files(self) -> None:
         """Importiert Modell-JSONs und `units.json` in die DB."""
-        devices_root = resources.files("genibus.devices")
-        for datapoint_file in devices_root.iterdir():
-            file_name = Path(datapoint_file.name)
-            if file_name.suffix.lower() != ".json":
-                continue
+        with self._lock:
+            devices_root = resources.files("genibus.devices")
+            for datapoint_file in devices_root.iterdir():
+                file_name = Path(datapoint_file.name)
+                if file_name.suffix.lower() != ".json":
+                    continue
 
-            model = file_name.stem
-            with datapoint_file.open(encoding="utf-8") as filePointer:
-                data = json.load(filePointer)
+                model = file_name.stem
+                with datapoint_file.open(encoding="utf-8") as filePointer:
+                    data = json.load(filePointer)
 
-            for row in data:
+                for row in data:
+                    self.conn.execute(
+                        "INSERT INTO dataitems VALUES(?, ?, ?, ?, ?, ?)",
+                        self.to_list(model, row),
+                    )
+            self.conn.commit()
+
+            units_json = (
+                resources.files("genibus.config")
+                .joinpath("units.json")
+                .read_text(encoding="latin-1")
+            )
+            units = json.loads(units_json)
+            for key, unit in units.items():
+                unit[0] = unit[0].strip()
                 self.conn.execute(
-                    "INSERT INTO dataitems VALUES(?, ?, ?, ?, ?, ?)",
-                    self.to_list(model, row),
+                    "INSERT INTO units VALUES(?, ?, ?, ?)", self.to_list(int(key), unit)
                 )
-        self.conn.commit()
-
-        units_json = (
-            resources.files("genibus.config")
-            .joinpath("units.json")
-            .read_text(encoding="latin-1")
-        )
-        units = json.loads(units_json)
-        for key, unit in units.items():
-            unit[0] = unit[0].strip()
-            self.conn.execute("INSERT INTO units VALUES(?, ?, ?, ?)", self.to_list(int(key), unit))
-        self.conn.commit()
+            self.conn.commit()
 
     def close(self) -> None:
         """Schreibt ausstehende Aenderungen und schliesst DB-Ressourcen."""
-        self.conn.commit()
-        self.cursor.close()
-        self.conn.close()
+        with self._lock:
+            self.conn.commit()
+            self.cursor.close()
+            self.conn.close()
 
     def data_items(self, model: str) -> list[Sequence[Any]]:
         """Liefert alle Datapoints eines Modells.
@@ -141,9 +149,12 @@ class DeviceDB(SingletonBase):
         Returns:
             list[Sequence[Any]]: SQL-Resultset sortiert nach Klasse und ID.
         """
-        self.cursor.execute("SELECT * FROM dataitems WHERE model = ? ORDER BY class, id;", (model,))
-        result = self.cursor.fetchall()
-        return result
+        with self._lock:
+            self.cursor.execute(
+                "SELECT * FROM dataitems WHERE model = ? ORDER BY class, id;", (model,)
+            )
+            result = self.cursor.fetchall()
+            return result
 
     def data_items_by_class(self, model: str, klass: int) -> Any:
         """Liefert Datapoints eines Modells gefiltert nach APDU-Klasse.
@@ -155,15 +166,16 @@ class DeviceDB(SingletonBase):
         Returns:
             Any: Dict ``name -> DataitemByClass`` oder leere Liste.
         """
-        self.cursor.execute(
-            "SELECT name, id, access, note FROM dataitems "
-            "WHERE model = ? AND class = ? ORDER BY id;",
-            (model, klass),
-        )
-        result = self.cursor.fetchall()
-        if result:
-            return {d.name: d for d in [DataitemByClass(*x) for x in result]}
-        return result
+        with self._lock:
+            self.cursor.execute(
+                "SELECT name, id, access, note FROM dataitems "
+                "WHERE model = ? AND class = ? ORDER BY id;",
+                (model, klass),
+            )
+            result = self.cursor.fetchall()
+            if result:
+                return {d.name: d for d in [DataitemByClass(*x) for x in result]}
+            return result
 
     def data_item_by_class_and_name(self, model: str, name: str) -> Any:
         """Liefert einen Datapoint per Modell und Name.
@@ -175,24 +187,27 @@ class DeviceDB(SingletonBase):
         Returns:
             Any: `DataitemByClassAndName` oder leere Liste.
         """
-        self.cursor.execute(
-            "SELECT id, class, access, note FROM dataitems WHERE model = ? AND name = ?;",
-            (model, name),
-        )
-        result = self.cursor.fetchall()
-        return DataitemByClassAndName(*result[0]) if result else []
+        with self._lock:
+            self.cursor.execute(
+                "SELECT id, class, access, note FROM dataitems WHERE model = ? AND name = ?;",
+                (model, name),
+            )
+            result = self.cursor.fetchall()
+            return DataitemByClassAndName(*result[0]) if result else []
 
     def units(self) -> list[Sequence[Any]]:
         """Liefert alle Einheiten aus der `units`-Tabelle."""
-        self.cursor.execute("SELECT * FROM units ORDER BY id;")
-        result = self.cursor.fetchall()
-        return result
+        with self._lock:
+            self.cursor.execute("SELECT * FROM units ORDER BY id;")
+            result = self.cursor.fetchall()
+            return result
 
     def unit_entities(self) -> list[Sequence[Any]]:
         """Liefert alle unterschiedlichen physikalischen Einheitsklassen."""
-        self.cursor.execute("SELECT DISTINCT(physicalEntity) FROM units ORDER BY 1;")
-        result = self.cursor.fetchall()
-        return result
+        with self._lock:
+            self.cursor.execute("SELECT DISTINCT(physicalEntity) FROM units ORDER BY 1;")
+            result = self.cursor.fetchall()
+            return result
 
     def units_by_entity(self, entity: str) -> list[Sequence[Any]]:
         """Liefert alle Einheiten fuer eine physikalische Klasse.
@@ -203,9 +218,12 @@ class DeviceDB(SingletonBase):
         Returns:
             list[Sequence[Any]]: Zugehoerige Einheitseintraege.
         """
-        self.cursor.execute("SELECT * FROM units WHERE physicalEntity = ? ORDER BY id;", (entity,))
-        result = self.cursor.fetchall()
-        return result
+        with self._lock:
+            self.cursor.execute(
+                "SELECT * FROM units WHERE physicalEntity = ? ORDER BY id;", (entity,)
+            )
+            result = self.cursor.fetchall()
+            return result
 
     # Backward-compatible camelCase aliases.
     def createSchema(self) -> None:
@@ -239,4 +257,3 @@ class DeviceDB(SingletonBase):
     def unitsByEntity(self, entity: str) -> list[Sequence[Any]]:
         """Legacy-Alias fuer `units_by_entity()`."""
         return self.units_by_entity(entity)
-

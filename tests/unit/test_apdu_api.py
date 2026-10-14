@@ -1,6 +1,6 @@
 import genibus.apdu as apdu
 import genibus.gbdefs as defs
-import genicontrol.apdu as gui_apdu
+import genibus.apdu as gui_apdu
 import genicontrol.dataitems as gui_dataitems
 
 

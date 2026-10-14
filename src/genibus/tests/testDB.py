@@ -26,10 +26,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from genibus.devices.db import DeviceDB, DataitemByClass
-import genibus.gbdefs as defs
-
+import threading
 import unittest
+
+from genibus.devices.db import DataitemByClass, DeviceDB
+
 
 class TestAPDUs(unittest.TestCase):
 
@@ -46,7 +47,31 @@ class TestAPDUs(unittest.TestCase):
              (104, 'Voltage', 2.0, 'V')])
 
     def testDataItemByClassName(self):
-        self.assertEqual(self.db.dataitemByClassAndName("magna", "ref_loc"), DataitemByClass(40, 2, 1, 'Local reference setting'))
+        self.assertEqual(
+            self.db.dataitemByClassAndName("magna", "ref_loc"),
+            DataitemByClass(40, 2, 1, 'Local reference setting'),
+        )
+
+    def testDatabaseCanBeUsedFromAnotherThread(self):
+        results = []
+        errors = []
+
+        def query_units():
+            try:
+                for _ in range(25):
+                    results.append(self.db.unitsByEntity("Voltage"))
+            except Exception as error:
+                errors.append(error)
+
+        workers = [threading.Thread(target=query_units) for _ in range(4)]
+        for worker in workers:
+            worker.start()
+        for worker in workers:
+            worker.join()
+
+        self.assertEqual(errors, [])
+        self.assertEqual(len(results), 100)
+        self.assertTrue(all(result == results[0] for result in results))
 
 
 def main():

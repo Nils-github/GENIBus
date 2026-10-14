@@ -36,7 +36,7 @@ import time
 
 import queue
 
-import genicontrol.apdu as apdu
+import genibus.apdu as apdu
 import genibus.gbdefs as defs
 from genicontrol.dissect import dissectResponse
 from genilib.utils import dumpHex, makeWord

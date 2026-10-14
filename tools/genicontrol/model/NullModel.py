@@ -30,7 +30,7 @@
 import math
 import threading
 import logging
-import genicontrol.apdu as apdu
+import genibus.apdu as apdu
 import genicontrol.model.ModelIf as ModelIf
 from genicontrol.model.config import DataitemConfiguration
 import genicontrol.conversion as conversion
